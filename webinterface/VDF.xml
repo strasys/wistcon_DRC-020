@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wistcon-pool>
+
+<GPIOIN>
+	<InputName>Schwimmer</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>Mischer Solar</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>Mischer Bypass</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>nn</InputName>
+</GPIOIN>
+<GPIOOUT>
+	<OutputName>Mischer</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Pumpe</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Becken Licht</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Außen Licht</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Frischwasserventil</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Out 6</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Out 7</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>Out 8</OutputName>
+</GPIOOUT>
+<PT1000>
+	<PT1000Name>Becken</PT1000Name>
+</PT1000>
+<PT1000>
+	<PT1000Name>Außen</PT1000Name>
+</PT1000>
+<PT1000>
+	<PT1000Name>Dach</PT1000Name>
+</PT1000>
+<PT1000>
+	<PT1000Name>Rücklauf</PT1000Name>
+</PT1000>
+<CleaningInterval>
+	<Start>07:00</Start>
+	<Stop>08:30</Stop>
+	<Periode>01:30</Periode>
+</CleaningInterval>
+<CleaningInterval>
+	<Start>11:00</Start>
+	<Stop>12:00</Stop>
+	<Periode>01:00</Periode>
+</CleaningInterval>
+<CleaningInterval>
+	<Start>16:00</Start>
+	<Stop>17:00</Stop>
+	<Periode>01:00</Periode>
+</CleaningInterval>
+<CleaningInterval>
+	<Start>18:00</Start>
+	<Stop>19:00</Stop>
+	<Periode>01:00</Periode>
+</CleaningInterval>
+<CleaningSetting>
+	<OperationMode>OFF</OperationMode>
+	<tipCleaningTime>0</tipCleaningTime>
+</CleaningSetting>
+<SolarSetting>
+	<operationMode>OFF</operationMode>
+	<backWaterTemp>30</backWaterTemp>
+	<diffONTemp>7</diffONTemp>
+	<diffOFFTemp>5</diffOFFTemp>
+	<SwitchOFFdelay>2</SwitchOFFdelay>
+	<SwitchONdelay>2</SwitchONdelay>
+</SolarSetting>
+<LevelControl>
+	<operationMode>OFF</operationMode>
+	<Overtraveltime>7</Overtraveltime>
+	<SensorONTime>5</SensorONTime>
+</LevelControl>
+<OperationModeDevice>
+	<AutomaticHand>stop</AutomaticHand>
+	<DNSService>run</DNSService>
+</OperationModeDevice>
+<Owner>
+	<email>strajoha@gmail.com</email>
+	<userName>strajoha</userName>
+</Owner>
+<DeviceInfo>
+	<DeviceID>14724111802896HwtGhV6vRQDwG9ApHRsmfnMTrph7xnQ6eJyLd21XxRGcz1</DeviceID>
+</DeviceInfo>
+</wistcon-pool>
