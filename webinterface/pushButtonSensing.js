@@ -258,7 +258,7 @@ window.onload=startatLoad();
 				if (LoginStatus[0])
 				{
 					$(document).ready(function(){
-						$("#mainNavbar").load("navbar.html?ver=sortoutcache", function(){
+						$("#mainNavbar").load("navbar.html?ver=1", function(){
 							$("#navbarSet").addClass("active");
 							$("#navbar_set span").toggleClass("nav_notactive nav_active");
 							$("#navbarlogin").hide();

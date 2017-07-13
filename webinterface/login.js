@@ -130,7 +130,7 @@ window.onload=startatLoad();
 //active site roots.
 function loadNavbar(){
 $(document).ready(function(){
-	$("#mainNavbar").load("navbar.html?ver=sortoutcache", function(){
+	$("#mainNavbar").load("navbar.html?ver="+sortoutcache.valueOf(), function(){
 		$("#navbarlogin").addClass("active");
 		$("#navbarlogout").hide();
 		$("#navbarFunction").hide();

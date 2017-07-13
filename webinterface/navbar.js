@@ -25,7 +25,7 @@ $("#navbar_set").on('click', function(){
 });
 
 $("#navbar_home").on('click', function(){
-	window.location.replace("index.html?ver=1");
+	window.location.replace("index.html?ver=2");
 });
 
 

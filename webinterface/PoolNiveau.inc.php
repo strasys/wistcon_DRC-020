@@ -30,7 +30,7 @@ class Niveau
 		$OvertravelTime = (int) $xml->LevelControl[0]->Overtraveltime;
 		$TimeSensorMustON = (int) $xml->LevelControl[0]->SensorONTime * 60;
 	//	echo $TimeSensorMustON ."= TimeSensorMustON<br>";
-		
+	//	$NiveauSensor = 1;
 		$artemp = array();
 			$i = 0;
 			$NiveauControlFile = fopen("/tmp/PoolNiveauControlFile.txt", "r");

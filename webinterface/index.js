@@ -193,7 +193,7 @@ function refresh(){
 			}
 			setTimeout(function(){
 				refresh();
-			}, 10000);
+			}, 2000);
 		});
 	});
 }
@@ -279,7 +279,7 @@ function loadNavbar(callback3){
 	getStatusLogin(function(){
 		if(LoginStatus[0]){	
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html?ver=sortoutcache", function(){
+				$("#mainNavbar").load("navbar.html?ver="+sortoutcache.valueOf(), function(){
 					$("#navbarHome").addClass("active");
 					$("#navbar_home span").toggleClass("nav_notactive nav_active");
 					$("#navbarlogin").hide();
@@ -298,7 +298,7 @@ function loadNavbar(callback3){
 		else
 		{
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html?ver=sortoutcache", function(){
+				$("#mainNavbar").load("navbar.html?ver="+sortoutcache.valueOf(), function(){
 					$("#navbarHome").addClass("active");
 					$("#navbar_home span").toggleClass("nav_notactive nav_active");
 					$("#navbarlogout").hide();

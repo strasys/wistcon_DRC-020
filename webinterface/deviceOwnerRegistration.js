@@ -553,7 +553,7 @@ function loadNavbar(callback1){
 		if (LogData[0])
 		{
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html?ver=sortoutcache", function(){
+				$("#mainNavbar").load("navbar.html?ver=1", function(){
 					$("#navbarlogin").hide();
 					$("#navbarSet").addClass("active");
 					$("#navbarSet").show();

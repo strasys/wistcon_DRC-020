@@ -48,6 +48,7 @@ class Solar
 		$TempControlFile = fopen("/tmp/PoolTempControlFile.txt", "r");
 		if ($TempControlFile == false){
 			$TempControlFile = fopen("/tmp/PoolTempControlFile.txt","w");
+			exec("chown www-data:root /tmp/PoolTempControlFile.txt");
 			fwrite($TempControlFile,"SwitchONdelay:0\r\n");
 			fwrite($TempControlFile,"SwitchOFFdelay:0\r\n");
 			fwrite($TempControlFile,"SolarON:0\r\n");
@@ -130,6 +131,15 @@ class Solar
 		}
 		elseif ($strOperationMode == 'OFF'){
 			$OperationFlag = false;
+
+			//Delete all Time - Marker
+			$TempControlFile = fopen("/tmp/PoolTempControlFile.txt", "w");
+			if ($TempControlFile == true){
+				fwrite($TempControlFile,"SwitchONdelay:0\r\n");
+				fwrite($TempControlFile,"SwitchOFFdelay:0\r\n");
+				fwrite($TempControlFile,"SolarON:0\r\n");
+				fclose($TempControlFile);
+			}
 		}
 
 		return (bool) $OperationFlag;

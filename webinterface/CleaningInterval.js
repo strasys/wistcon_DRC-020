@@ -352,7 +352,7 @@ function loadNavbar(callback1){
 		if (LogData[0])
 		{
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html?ver=sortoutcache", function(){
+				$("#mainNavbar").load("navbar.html?ver="+sortoutcache.valueOf(), function(){
 					$("#navbarFunction").addClass("active");
 					$("#navbar_function span").toggleClass("nav_notactive nav_active")
 					$("#navbarlogin").hide();

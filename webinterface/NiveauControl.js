@@ -129,7 +129,7 @@ function loadNavbar(callback1){
 		if (LogData[0])
 		{
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html", function(){
+				$("#mainNavbar").load("navbar.html?ver=1", function(){
 					$("#navbarFunction").addClass("active");
 					$("#navbar_function span").toggleClass("nav_notactive nav_active");
 					$("#navbarlogin").hide();

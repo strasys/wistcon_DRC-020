@@ -59,6 +59,7 @@
 		"P9.23",	/* digiout: gpio1_17*/
 		"P9.24",	/* TTL-TXD_4D: uart1_txd */
 		"P9.26",	/* TTL-TXD_4D: uart1_rxd */
+		"P9.27",	/* digiout: gpio3_19*/
 		"P9.39",	/* AIN0 */
 		"P9.40",	/* AIN1 */
 		"P9.37",	/* AIN2 */
@@ -98,7 +99,8 @@
 		"uart1",
 		"uart2",
 		"tscadc",
-		"i2c1";
+		"i2c1",
+		"i2c2";
 
        fragment@0 {
              target = <&am33xx_pinmux>;

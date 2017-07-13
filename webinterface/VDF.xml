@@ -2,53 +2,113 @@
 <wistcon-pool>
 
 <GPIOIN>
-	<InputName>Schwimmer</InputName>
+	<InputName>IN 1</InputName>
 </GPIOIN>
 <GPIOIN>
-	<InputName>Mischer Solar</InputName>
+	<InputName>IN 2</InputName>
 </GPIOIN>
 <GPIOIN>
-	<InputName>Mischer Bypass</InputName>
+	<InputName>IN 3</InputName>
 </GPIOIN>
 <GPIOIN>
-	<InputName>nn</InputName>
+	<InputName>IN 4</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 5</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 6</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 7</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 8</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 9</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 10</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 11</InputName>
+</GPIOIN>
+<GPIOIN>
+	<InputName>IN 12</InputName>
 </GPIOIN>
 <GPIOOUT>
-	<OutputName>Mischer</OutputName>
+	<OutputName>OUT 1</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Pumpe</OutputName>
+	<OutputName>OUT 2</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Becken Licht</OutputName>
+	<OutputName>OUT 3</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Außen Licht</OutputName>
+	<OutputName>OUT 4</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Frischwasserventil</OutputName>
+	<OutputName>OUT 5</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Out 6</OutputName>
+	<OutputName>OUT 6</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Out 7</OutputName>
+	<OutputName>OUT 7</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>Out 8</OutputName>
+	<OutputName>OUT 8</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>OUT 9</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>OUT 10</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>OUT 11</OutputName>
+</GPIOOUT>
+<GPIOOUT>
+	<OutputName>OUT 12</OutputName>
 </GPIOOUT>
 <PT1000>
-	<PT1000Name>Becken</PT1000Name>
+	<PT1000Name>PT1000 1</PT1000Name>
 </PT1000>
 <PT1000>
-	<PT1000Name>Außen</PT1000Name>
+	<PT1000Name>PT1000 2</PT1000Name>
 </PT1000>
 <PT1000>
-	<PT1000Name>Dach</PT1000Name>
+	<PT1000Name>PT1000 3</PT1000Name>
 </PT1000>
 <PT1000>
-	<PT1000Name>Rücklauf</PT1000Name>
+	<PT1000Name>PT1000 4</PT1000Name>
 </PT1000>
+<AIN>
+	<AINName>AIN 1</AINName>
+</AIN>
+<AIN>
+	<AINName>AIN 2</AINName>
+</AIN>
+<AIN>
+	<AINName>AIN 3</AINName>
+</AIN>
+<AIN>
+	<AINName>AIN 4</AINName>
+</AIN>
+<AOUT>
+	<AOUTName>AOUT 1</AOUTName>
+</AOUT>
+<AOUT>
+	<AOUTName>AOUT 2</AOUTName>
+</AOUT>
+<AOUT>
+	<AOUTName>AOUT 3</AOUTName>
+</AOUT>
+<AOUT>
+	<AOUTName>AOUT 4</AOUTName>
+</AOUT>
 <CleaningInterval>
 	<Start>07:00</Start>
 	<Stop>08:30</Stop>
@@ -70,11 +130,11 @@
 	<Periode>01:00</Periode>
 </CleaningInterval>
 <CleaningSetting>
-	<OperationMode>OFF</OperationMode>
+	<OperationMode>AUTO</OperationMode>
 	<tipCleaningTime>0</tipCleaningTime>
 </CleaningSetting>
 <SolarSetting>
-	<operationMode>OFF</operationMode>
+	<operationMode>AUTO</operationMode>
 	<backWaterTemp>30</backWaterTemp>
 	<diffONTemp>7</diffONTemp>
 	<diffOFFTemp>5</diffOFFTemp>
@@ -82,19 +142,19 @@
 	<SwitchONdelay>2</SwitchONdelay>
 </SolarSetting>
 <LevelControl>
-	<operationMode>OFF</operationMode>
+	<operationMode>AUTO</operationMode>
 	<Overtraveltime>7</Overtraveltime>
 	<SensorONTime>5</SensorONTime>
 </LevelControl>
 <OperationModeDevice>
 	<AutomaticHand>stop</AutomaticHand>
-	<DNSService>run</DNSService>
+	<DNSService>stop</DNSService>
 </OperationModeDevice>
 <Owner>
-	<email>strajoha@gmail.com</email>
-	<userName>strajoha</userName>
+	<email/>
+	<userName/>
 </Owner>
 <DeviceInfo>
-	<DeviceID>14724111802896HwtGhV6vRQDwG9ApHRsmfnMTrph7xnQ6eJyLd21XxRGcz1</DeviceID>
+	<DeviceID/>
 </DeviceInfo>
 </wistcon-pool>
