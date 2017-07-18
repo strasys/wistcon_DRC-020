@@ -20,14 +20,14 @@ int pointConfigReg = 0b00000001;
 int pointConversReg = 0b00000000;
 int MSB, LSB;
 
-void initADS1015() {
+void initADS1015(int I2Caddr) {
 	int file;
 		unsigned char buf[3];
 		buf[0] = 0b00000001; //point to config register.
 		buf[1] = 0b00000010; //MSB config reg bit 11:9 = 001 = max. 4.096V; bit 8 0 = continuous conversion
 		buf[2] = 0b10000011; //LSB bit 7:5 = 100 = 1600SPS; bit 4 = 0 comparator mode with hysteresis; bit 3 = 0 (= activ low of ALERT/RDY pin)
 							 //bit 2 = 0 (= non latching comperator); bit 1:0 = 11 (= disable comparator) ALERT pin is high.
-		file = i2c_open(I2C1_path, addr_ADC_ADS1015);
+		file = i2c_open(I2C1_path, I2Caddr);
 		i2c_write_byte(file, buf[0]);
 		i2c_write_byte(file, buf[1]);
 		i2c_write_byte(file, buf[2]);
@@ -35,7 +35,7 @@ void initADS1015() {
 		i2c_close(file);
 }
 
-int getADCPT1000singleval(int channel) {
+int getADCPT1000singleval(int channel, int I2Caddr) {
 	int file;
 	int AIN0 = 0b01000000; //single input
 	int AIN1 = 0b01010000;
