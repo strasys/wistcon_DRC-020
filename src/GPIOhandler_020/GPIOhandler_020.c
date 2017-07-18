@@ -17,7 +17,7 @@
 int main(int argc, char *argv[], char *env[]){
 	int i = 0;
 	int Num = 0, Value = 0;
-	int GPIOstatval[12];
+	int GPIOstatval[16];
 	char setget;
 	char InOut;
 
@@ -54,8 +54,8 @@ int main(int argc, char *argv[], char *env[]){
 
 		else if ((InOut == 'O')){
 			for (i = 12; i < 28; i++){
-			GPIOstatval[i] = gpio_get_value(IN_OUT_2[i][0]);
-			printf("%d\n", GPIOstatval[i]);
+			GPIOstatval[i-12] = gpio_get_value(IN_OUT_2[i][0]);
+			printf("%d\n", GPIOstatval[i-12]);
 			}
 		}
 
@@ -90,8 +90,7 @@ int main(int argc, char *argv[], char *env[]){
 				"P9_14 50 OUTPUT RUN \n"
 				"P9_15 48 OUTPUT ERROR \n"
 				"P9_23 49 OUTPUT DIGIOUT_UART2 \n"
-				"P9_27 115 OUTPUT DIGIOUT_UART1");
-
+				"P9_27 115 OUTPUT DIGIOUT_UART1 \n");
 	}
 
 	return 0;

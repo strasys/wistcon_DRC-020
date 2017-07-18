@@ -23,29 +23,35 @@ function getGPIOoutXMLDa(setget, url, cfunc, senddata){
 
 
 function getOutstatus(callback1){
-//		if (!document.all && !document.getElementById)
-//		return
+	// if (!document.all && !document.getElementById)
+	// return
+		
 		getGPIOoutXMLDa("post","setGPIO.php",function()
 		{
 			if (xhttp.readyState==4 && xhttp.status==200)
 			{
-			var getOUT = JSON.parse(xhttp.responseText); 
-			
-			OUT = [parseInt(getOUT.OUT1),
-		           parseInt(getOUT.OUT2),
-		           parseInt(getOUT.OUT3),
-		           parseInt(getOUT.OUT4),
-		           parseInt(getOUT.OUT5),
-		           parseInt(getOUT.OUT6),
-		           parseInt(getOUT.OUT7),
-		           parseInt(getOUT.OUT8),
-		           (getOUT.loginstatus),
-		           (getOUT.adminstatus)
-		           ];
-			
-			if (callback1){
-				callback1();
-			}
+				var getOUT = JSON.parse(xhttp.responseText); 
+							
+				OUT = [
+					parseInt(getOUT.OUT1),
+					parseInt(getOUT.OUT2),
+					parseInt(getOUT.OUT3),
+					parseInt(getOUT.OUT4),
+					parseInt(getOUT.OUT5),
+					parseInt(getOUT.OUT6),
+					parseInt(getOUT.OUT7),
+					parseInt(getOUT.OUT8),
+					parseInt(getOUT.OUT9),
+					parseInt(getOUT.OUT10),
+					parseInt(getOUT.OUT11),
+					parseInt(getOUT.OUT12),
+					getOUT.loginstatus,
+					getOUT.adminstatus
+				];
+
+				if (callback1){
+					callback1();
+				}
 			}
 		}, "setgetGPIO=g&InOut=o");		
 }
@@ -79,7 +85,7 @@ function setOutstatus(numOut){
 // of the button.
 function setButtonOut(){
 	 
-	for (i=0; i<8; i++){
+	for (i=0; i<12; i++){
 		var status = OUT[i];
 		if(status == 1){
 			span = document.getElementById("badgeOut"+(i));
@@ -147,16 +153,13 @@ function getGPIOoutXMLDataInput(){
 // This function transfers the data to the server where it will be saved with the 
 // help of a php function.
 function setGPIOoutXMLDataInput(callback3){
-	
-		var ButtonText = [document.getElementById("setButtonNameInputOut0").value,
-		                  document.getElementById("setButtonNameInputOut1").value,
-		                  document.getElementById("setButtonNameInputOut2").value,
-		                  document.getElementById("setButtonNameInputOut3").value,
-		                  document.getElementById("setButtonNameInputOut4").value,
-		                  document.getElementById("setButtonNameInputOut5").value,
-		                  document.getElementById("setButtonNameInputOut6").value,
-		                  document.getElementById("setButtonNameInputOut7").value,
-		                  ];
+
+	var ButtonText = "";
+	var ButtonTextRequest = "";
+		for (i=0; i<12; i++){
+			ButtonText = document.getElementById("setButtonNameInputOut"+i).value;
+			ButtonTextRequest = ButtonTextRequest+"ButtonText"+i+"="+ButtonText+"&";
+		}
 			
 		getGPIOoutXMLDa("post","setGPIO.php",function()
 		{
@@ -165,15 +168,7 @@ function setGPIOoutXMLDataInput(callback3){
 				callback3();
 			}
 		},
-		"ButtonText0="+ButtonText[0]+
-		"&ButtonText1="+ButtonText[1]+
-		"&ButtonText2="+ButtonText[2]+
-		"&ButtonText3="+ButtonText[3]+
-		"&ButtonText4="+ButtonText[4]+
-		"&ButtonText5="+ButtonText[5]+
-		"&ButtonText6="+ButtonText[6]+
-		"&ButtonText7="+ButtonText[7]+
-		"&ButtonFlag=1");
+		ButtonTextRequest+"ButtonFlag=1");
 	
 //	ButtonNameSave.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 }
@@ -215,7 +210,7 @@ function loadNavbar(callback1)
 {
 	getOutstatus(function()
 	{
-		if (OUT[9])
+		if (OUT[13])
 		{
 			$(document).ready(function()
 			{

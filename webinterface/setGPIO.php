@@ -43,6 +43,8 @@ if (isset($_POST["setgetGPIO"])){
 					'loginstatus' => $loginstatus,
 					'adminstatus' => $adminstatus
 				);
+			echo json_encode($arr);
+
 	}
 	
 	if (($_POST["setgetGPIO"] == $g) && $loginstatus && ($_POST["InOut"] == $I)){
@@ -62,7 +64,9 @@ if (isset($_POST["setgetGPIO"])){
 					'IN12' => $ausgabe[11],
 					'loginstatus' => $loginstatus,
 					'adminstatus' => $adminstatus
-					);
+				);
+
+			echo json_encode($arr);
 	}
 	
 	
@@ -124,8 +128,8 @@ if ($loginstatus == false){
 	$arr = array(	'loginstatus' => $loginstatus,
 			'adminstatus' => $adminstatus
 				);
+	echo json_encode($arr);
 }
 
-echo json_encode($arr);
 
 ?>

@@ -20,7 +20,11 @@
 
 #include "I2C-handler.h"
 // devices on i2c2 = naming on pin description
-int addr_EEPROM = 0b1010100;  // = 0x54 I2C address of the 24AA256-EEPROM
+int addr_EEPROMmain = 0b01010100;  // = 0x54 I2C address of the 24AA256-EEPROM
+int addr_EEPROMex1 = 0b01010000;		// = 0x50 I2C address
+int addr_EEPROMex2 = 0b01010001;		// = 0x51 I2C address
+int addr_EEPROMex3 = 0b01010010;		// = 0x52 I2C address
+int addr_EEPROMex4 = 0b01010011;		// = 0x53 I2C address
 //Devices on i2c1 = naming on Pin description
 int addr_ADC_ADS1015 = 0b1001000; // = 0x48 I2C address of the ADS1015 ADC for PT1000
 int addr_RTC_MCP7940N = 0b01101111;  // = 0x6F I2C address of the RTC (MCP7940N)

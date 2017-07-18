@@ -75,9 +75,8 @@ unsigned int IN_OUT_2[][3] = {
 		{ 50, 1, 0},	// P9_14 50 OUTPUT "RUN"
 		{ 48, 1, 0},	// P9_15 48 OUTPUT "ERROR"
 		{ 49, 1, 0},	// P9_23 49 OUTPUT "DIGIOUT_UART2"
-		{ 115,1, 0},	// P9_27 115 OUTPUT "DIGIOUT_UART1"
-		{ 0, 0, 0}
-};
+		{ 115, 1, 0},	// P9_27 115 OUTPUT "DIGIOUT_UART1"
+		{ 0, 0, 0} };
 
 //GPIO gpio;
 /*

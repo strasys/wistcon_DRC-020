@@ -12,17 +12,20 @@
 #include <unistd.h>
 #include <errno.h>
 #include "24AA256-EEPROM.h"
+#include "I2C-handler.h"
 
 
 int main(int argc, char *argv[], char *env[]){
 
 
-	char input[1];
+	char input[1], busnumchar[1];
 	char startregchar[6];
+	char extensionchar[1];
 	char numberbytes[3];
 	char eepromdata[255] = {0};
 	char datatoeeprom[65] = {0};
-	unsigned int startregint, numbytes;
+	int EEPROMaddr;
+	unsigned int startregint, numbytes, extensionNum, busnumint, I2Cchannel;
 
 
 	//read in argument
@@ -31,69 +34,170 @@ int main(int argc, char *argv[], char *env[]){
 	switch (input[0]){
 	case 'h':
 		printf("Description of function rweeprom:\n"
-				"rweeprom [i,r,w] [char \"string which shall be written\"]\n"
-				"  max length of chars = 255"
-				"	i => init, int I2C-channel (0,1,2), device address as hex \n"
-				"	r => read, int start reg. no., int number of bytes max. 255\n"
-				"	w => write, int start reg. no., string content max. length 64\n");
+				"rweeprom [i,r,w][int extension] [int start / int end]  [char \"string which shall be written\"]\n"
+				"		max length of chars = 255\n"
+				"	i : init, only for mainboard ram (=0x54) \n"
+				"	r : read, int 1 = I2C-1  / 2 = I2c-2, int extension number (1,2,3,4,5=EEPROM Mainboard)\n "
+				"		int start reg. no., int number of bytes max. 255\n"
+				"	w : write, int I2C-1  / I2c-2, int extension number (1,2,3,4,5=EEPROM Mainboard)\n"
+				"		int start reg. no., string content max. length 64\n");
 		break;
 	case 'i':
-		if (argc != 4) {
-			fprintf(stderr, "PT1000handler: missing argument! => %s\n", strerror(errno));
+		if (argc != 2) {
+			fprintf(stderr, "rweeprom: missing argument! => %s\n", strerror(errno));
 		} else {
-
-
+			EEPROMinit(1,54);
 		}
 		break;
 	case 'r':
-		if (argc !=4) {
+		if (argc !=6) {
 			fprintf(stderr, "rweeprom: missing argument! => %s\n", strerror(errno));
 		} else {
-			if (strlen(argv[2]) > 6){
+			if (strlen(argv[2]) >1){
 				fprintf(stderr, "%s is too long!\n", strerror(errno));
 			}
 			else
 			{
-				strcpy(startregchar, argv[2]);
+				strcpy(busnumchar, argv[2]);
+				busnumint = atoi(busnumchar);
+				switch(busnumint){
+					case 1:
+						I2Cchannel = I2C1_path;
+						break;
+					case 2:
+						I2Cchannel = I2C2_path;
+						break;
+					default:
+						fprintf(stderr, "%s Only I2C-1 and I2C-2 can be chosen!\n", strerror(errno));
+						break;
+					}
+			}
+
+			if (strlen(argv[3]) > 1){
+				fprintf(stderr, "%s is too long!\n", strerror(errno));
+			}
+			else
+			{
+				strcpy(extensionchar, argv[3]);
+				extensionNum = atoi(extensionchar);
+				switch(extensionNum){
+					case 1:
+						EEPROMaddr = addr_EEPROMex1;
+						break;
+					case 2:
+						EEPROMaddr = addr_EEPROMex2;
+						break;
+					case 3:
+						EEPROMaddr = addr_EEPROMex3;
+						break;
+					case 4:
+						EEPROMaddr = addr_EEPROMex4;
+						break;
+					case 5:
+						EEPROMaddr = addr_EEPROMmain;
+						break;
+					default:
+						fprintf(stderr, "%s Only extension numbers from 1 to 4 are allowed!\n", strerror(errno));
+						break;
+					}
+			}
+
+			if (strlen(argv[4]) > 6){
+				fprintf(stderr, "%s is too long!\n", strerror(errno));
+			}
+			else
+			{
+				strcpy(startregchar, argv[4]);
 				startregint = atoi(startregchar);
 			}
-			if (strlen(argv[3]) > 3){
+
+			if (strlen(argv[5]) > 3){
 				fprintf(stderr, "%s is too long!", strerror(errno));
 			}
 			else
 			{
-				strcpy(numberbytes, argv[3]);
+				strcpy(numberbytes, argv[5]);
 				numbytes = atoi(numberbytes);
 				if (numbytes > 255){
 					fprintf(stderr, "%s is to larg (max 255)!", strerror(errno));
 				}
 			}
 			//EEPROMreadbytes(unsigned int EEPROMregister, char *EEPROMdata, unsigned int length)
-			EEPROMreadbytes(startregint, eepromdata, numbytes);
+			EEPROMreadbytes(startregint, eepromdata, EEPROMaddr, I2Cchannel, numbytes);
 			printf("%s\n",eepromdata);
 		}
 		break;
 	case 'w':
-		if (argc !=4) {
+		if (argc !=6) {
 			fprintf(stderr, "rweeprom: missing argument! => %s\n", strerror(errno));
 		} else {
-			if (strlen(argv[2]) > 6){
+
+			if (strlen(argv[2]) >1){
 				fprintf(stderr, "%s is too long!\n", strerror(errno));
 			}
 			else
 			{
-				strcpy(startregchar, argv[2]);
+				strcpy(busnumchar, argv[2]);
+				busnumint = atoi(busnumchar);
+				switch(busnumint){
+					case 1:
+						I2Cchannel = I2C1_path;
+						break;
+					case 2:
+						I2Cchannel = I2C2_path;
+						break;
+					default:
+						fprintf(stderr, "%s Only I2C-1 and I2C-2 can be chosen!\n", strerror(errno));
+						break;
+				}
+			}
+
+
+			if (strlen(argv[3]) > 1){
+				fprintf(stderr, "%s is too long!\n", strerror(errno));
+			}
+			else
+			{
+				strcpy(extensionchar, argv[3]);
+				extensionNum = atoi(extensionchar);
+				switch(extensionNum){
+					case 1:
+						EEPROMaddr = addr_EEPROMex1;
+						break;
+					case 2:
+						EEPROMaddr = addr_EEPROMex2;
+						break;
+					case 3:
+						EEPROMaddr = addr_EEPROMex3;
+						break;
+					case 4:
+						EEPROMaddr = addr_EEPROMex4;
+						break;
+					case 5:
+						EEPROMaddr = addr_EEPROMmain;
+						break;
+					default:
+						fprintf(stderr, "%s Only extension numbers from 1 to 4 are allowed!\n", strerror(errno));
+						break;
+				}
+			}
+			if (strlen(argv[4]) > 6){
+				fprintf(stderr, "%s is too long!\n", strerror(errno));
+			}
+			else
+			{
+				strcpy(startregchar, argv[4]);
 				startregint = atoi(startregchar);
 			}
-			if (strlen(argv[3]) > 64){
+			if (strlen(argv[5]) > 64){
 				fprintf(stderr, "%s is too long!", strerror(errno));
 			}
 			else
 			{
-				strcpy(datatoeeprom,argv[3]);
+				strcpy(datatoeeprom,argv[5]);
 			}
 			//EEPROMwriteblock64(unsigned int EEPROMregister, char *EEPROMdata)
-			EEPROMwriteblock64(startregint, datatoeeprom);
+			EEPROMwriteblock64(startregint, EEPROMaddr, I2Cchannel, datatoeeprom);
 		}
 		break;
 	default:

@@ -27,12 +27,20 @@ function getGPIOinStatus(callback1){
 			{
 			var getIN = JSON.parse(xhttp.responseText); 
 		
-			IN =  [parseInt(getIN.IN1),
-		           parseInt(getIN.IN2),
-		           parseInt(getIN.IN3),
-		           parseInt(getIN.IN4),
-		           (getIN.loginstatus),
-		           (getIN.adminstatus)
+			IN =  [	parseInt(getIN.IN1),
+			        parseInt(getIN.IN2),
+			        parseInt(getIN.IN3),
+				parseInt(getIN.IN4),
+				parseInt(getIN.IN5),
+				parseInt(getIN.IN6),
+				parseInt(getIN.IN7),
+				parseInt(getIN.IN8), 
+				parseInt(getIN.IN9),
+				parseInt(getIN.IN10),
+				parseInt(getIN.IN11),
+				parseInt(getIN.IN12),
+		        	(getIN.loginstatus),
+		        	(getIN.adminstatus)
 		        ];
 			
 			if (callback1){
@@ -47,7 +55,7 @@ function getGPIOinStatus(callback1){
 function setInputStatusHMI(callback3){
 	getGPIOinStatus(function()
 	{
-	for (i=0; i<4; i++){
+	for (i=0; i<12; i++){
 		if((IN[i]) == 0){
 			document.getElementById("InputStatusLED"+i).className = "led-blue";
 		}
@@ -109,13 +117,13 @@ function getGPIOinXMLDataInput(){
 //This function transfers the data to the server where it will be saved with the 
 //help of a php function.
 function setGPIOinXMLDataInput(callback3){
-	
-		var InputText = [document.getElementById("setInputNameInputIn0").value,
-		                  document.getElementById("setInputNameInputIn1").value,
-		                  document.getElementById("setInputNameInputIn2").value,
-		                  document.getElementById("setInputNameInputIn3").value
-		                  ];
-			
+		var InputRequest = "";
+		var InputText = "";
+		for (i=0; i<12; i++){
+			InputText = document.getElementById("setInputNameInputIn"+i).value;
+			InputRequest = InputRequest+"InputText"+i+"="+InputText+"&";
+		}
+					
 		getGPIOinXMLDa("post","setGPIO.php",function()
 		{
 			if (xhttp.readyState==4 && xhttp.status==200)
@@ -123,11 +131,7 @@ function setGPIOinXMLDataInput(callback3){
 				callback3();
 			}
 		},
-		"InputText0="+InputText[0]+
-		"&InputText1="+InputText[1]+
-		"&InputText2="+InputText[2]+
-		"&InputText3="+InputText[3]+
-		"&InputFlag=1");
+		InputRequest+"InputFlag=1");
 	
 //	ButtonNameSave.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 }
@@ -204,7 +208,7 @@ window.onload=function()
 
 function refreshStatus(){
 	setInputStatusHMI();
-	setTimeout(function(){refreshStatus()}, 1000);
+	setTimeout(function(){refreshStatus()}, 10000);
 }
 
 

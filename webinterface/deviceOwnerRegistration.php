@@ -137,8 +137,8 @@ if (($_POST['OwnerRegistration'] == $write) && $adminstatus){
 }
 
 function getDeviceID (){
-	$xml = simplexml_load_file("VDF.xml");
-	$deviceIDinfo = (string) $xml->DeviceInfo[0]->DeviceID;
+	exec("flock /tmp/flockrweeprom /usr/lib/cgi-bin/rweeprom r 2 5 192 64", $deviceID);
+	$deviceIDinfo = trim($deviceID[0]);
 	return $deviceIDinfo;
 }
 

@@ -12,15 +12,18 @@
 #include "I2C-handler.h"
 #include "24AA256-EEPROM.h"
 
-void EEPROMinit(int I2Cchannel, int address) {
+//Only i2c-1 needs to be unbind, since this is forseen to be auto loaded
+//at start up for beaglebone environment.
+//The addressdec is the decimal number 0x54 => 54
+void EEPROMinit(int I2Cchannel, int addressdec) {
 	char I2CBusDir[255] = { };
 	FILE *f;
 	sprintf(I2CBusDir,
 			"/sys/devices/ocp.3/4819c000.i2c/i2c-%i/%i-00%i/driver/unbind",
-			I2Cchannel, I2Cchannel, address);
+			I2Cchannel, I2Cchannel, addressdec);
 	f = fopen(I2CBusDir, "w");
 	if (f != 0) {
-		fprintf(f, "%i-00%i", I2Cchannel, address);
+		fprintf(f, "%i-00%i", I2Cchannel, addressdec);
 		fclose(f);
 	} else {
 		fprintf(stderr, "EEPROMinit: %s\n", strerror(errno));
@@ -28,7 +31,8 @@ void EEPROMinit(int I2Cchannel, int address) {
 
 }
 
-int EEPROMwriteblock64(unsigned int EEPROMregister, char *EEPROMdata) {
+//Write Block needs some additional addresses
+int EEPROMwriteblock64(unsigned int EEPROMregister, int EEPROMaddr, unsigned char I2Cchannel ,char *EEPROMdata) {
 	int f, i;
 	unsigned int length;
 	unsigned char buf[255] = { };
@@ -49,7 +53,7 @@ int EEPROMwriteblock64(unsigned int EEPROMregister, char *EEPROMdata) {
 			buf[i] = bufdata[i];
 		}
 
-		f = i2c_open(I2C2_path, addr_EEPROM);
+		f = i2c_open(I2Cchannel, EEPROMaddr);
 		i2c_write(f, buf, (length + 2));
 		i2c_close(f);
 	} else {
@@ -61,7 +65,7 @@ int EEPROMwriteblock64(unsigned int EEPROMregister, char *EEPROMdata) {
 	return 0;
 }
 
-int EEPROMwritebyte(unsigned int EEPROMregister, char EEPROMdata) {
+int EEPROMwritebyte(unsigned int EEPROMregister, int EEPROMaddr, unsigned char I2Cchannel, char EEPROMdata) {
 	int f, length, writenumberbyte;
 	unsigned char buf[255] = { };
 //	char bufdata[255] = { };
@@ -75,7 +79,7 @@ int EEPROMwritebyte(unsigned int EEPROMregister, char EEPROMdata) {
 		//for (i = 2; i <= sizeof(bufdata); i++) {
 			buf[2] = EEPROMdata;
 	//	}
-		f = i2c_open(I2C2_path, addr_EEPROM);
+		f = i2c_open(I2Cchannel, EEPROMaddr);
 		writenumberbyte = i2c_write(f, buf, length + 2);
 		if (writenumberbyte == 3){
 			i2c_close(f);
@@ -91,8 +95,7 @@ int EEPROMwritebyte(unsigned int EEPROMregister, char EEPROMdata) {
 
 	return 0;
 }
-void EEPROMreadbytes(unsigned int EEPROMregister, char *EEPROMdata,
-		unsigned int length) {
+void EEPROMreadbytes(unsigned int EEPROMregister, char *EEPROMdata, int EEPROMaddr, unsigned char I2Cchannel, unsigned int length) {
 	int f, i;
 	unsigned char buf[255] = { };
 	char bufdata[255] = { };
@@ -107,7 +110,7 @@ void EEPROMreadbytes(unsigned int EEPROMregister, char *EEPROMdata,
 		buf[i] = bufdata[i];
 	}
 
-	f = i2c_open(I2C2_path, addr_EEPROM);
+	f = i2c_open(I2Cchannel, EEPROMaddr);
 	i2c_write(f, buf, 2);
 	i2c_read(f, buf, length);
 	i2c_close(f);
