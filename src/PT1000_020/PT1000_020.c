@@ -96,7 +96,7 @@ case 'g':
 	} else {
 		channel = atoi(argv[2]);
 
-		calctemp_Kelvin(channel, t_kelvin);
+		//calctemp_Kelvin(channel, t_kelvin);
 
 		for (x=0;x<20;x++){
 			calctemp_Celsius(channel, t_celsius);
