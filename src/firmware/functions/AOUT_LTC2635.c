@@ -26,7 +26,7 @@ int dacALLaddr = 0b00001111;
 int dacOUT1 = 1;
 int dacOUT2 = 2;
 
-void init_AOUT() {
+void init_AOUT(unsigned int addr_AOUT) {
 	char fopenModus[2] = {};
 	FILE *f = NULL;
 	char username[255];
@@ -37,7 +37,7 @@ void init_AOUT() {
 	long int fileprotection[] = {0};
 	int filedesc;
 
-	AOUT_set_internal_reference();
+	AOUT_set_internal_reference(addr_AOUT);
 	//For the first call the txt file will be generated with val = 0
 	if (access(AOUT_DIR, (R_OK | W_OK)) != -1) {
 				sprintf(fopenModus, "r+");
@@ -70,20 +70,20 @@ void init_AOUT() {
 
 			close(filedesc);
 
-	AOUT_set_value_DACn(dacOUT1, 0);
-	AOUT_set_value_DACn(dacOUT2, 0);
+	AOUT_set_value_DACn(dacOUT1, 0, addr_AOUT);
+	AOUT_set_value_DACn(dacOUT2, 0, addr_AOUT);
 }
 //This set's the internal reference of the Digital
 //to Analog converter.
 //For that chip the internal ref. is 2,5 V
 
-void AOUT_set_internal_reference() {
+void AOUT_set_internal_reference(unsigned int addr_AOUT) {
 	int file;
 	unsigned char buf[3];
 	buf[0] = 0b01101111; //The first 4 bit in byte 1 are relevant to set to internal reference.
 	buf[1] = 0;
 	buf[2] = 0;
-	file = i2c_open(I2C1_path, addr_AOUT_LTC2635);
+	file = i2c_open(I2C1_path, addr_AOUT);
 	i2c_write(file, buf, 3);
 	//printf("AOUT Number of bytes written: %d\n", numByte);
 	i2c_close(file);
@@ -91,7 +91,7 @@ void AOUT_set_internal_reference() {
 
 // DACchannel is DAC_A or DAC_B
 
-void AOUT_set_value_DACn(int DACchl, int value) {
+void AOUT_set_value_DACn(int DACchl, int value, unsigned int addr_AOUT) {
 	int file;
 	unsigned char buf[3];
 	buf[0] = 0b00110000; //The first 4 bits COMMAND = Write to and Update (Power Up) DAC Register n.
@@ -116,7 +116,7 @@ void AOUT_set_value_DACn(int DACchl, int value) {
 		//printf("buf 2 %x\n",buf[2]);
 	}
 
-	file = i2c_open(I2C1_path, addr_AOUT_LTC2635);
+	file = i2c_open(I2C1_path, addr_AOUT);
 	i2c_write(file, buf, 3);
 	//printf("AOUT Number of bytes written: %d\n", numByte);
 	i2c_close(file);

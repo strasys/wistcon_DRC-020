@@ -24,6 +24,7 @@
 #include "GPIO.h"
 #include "AOUT_LTC2635.h"
 #include "24AA256-EEPROM.h"
+#include "ADS1015.h"
 
 
 
@@ -31,8 +32,44 @@ void init(void){
 	//char command[255];
 	init_RTC(I2C1_path);
 	init_GPIO(2);
-	//init_AOUT();
-	//EEPROMinit(1, 54);
+
+	/*
+	 * Read mainboard EEPROM - to detect the bus addresses and
+	 * devices added to the extension slots.
+	 * Than initiate hardware.
+	 */
+			unsigned int regreadstart = 256;
+			unsigned int regreadnumberbyte = 64;
+			char extaddrEEPROM_temp[70], extdeviceEEPROM[70], eepromdata[255];
+			int extaddrEEPROM;
+			int i = 0;
+
+			for (i=0; i<4; i++){
+				EEPROMreadbytes(regreadstart, eepromdata, addr_EEPROMmain, I2C2_path, regreadnumberbyte);
+				char tempstring[70];
+				strcpy(tempstring, eepromdata);
+				const char delimiters[] = ":";
+				strtok(tempstring, delimiters);
+				strcpy(extaddrEEPROM_temp, strtok(NULL, delimiters));
+				//printf("str_EEPROM_addr %i: %s\n",i, extaddrEEPROM_temp);
+				strcpy(extdeviceEEPROM, strtok(NULL, delimiters));
+				//printf("str_EEPROM_device %i: %s\n",i, extdeviceEEPROM);
+				if (strcmp(extdeviceEEPROM,"PT1000") == 0){
+					extaddrEEPROM = strtol(extaddrEEPROM_temp, NULL, 16);
+					//printf("str_EEPROM_address %i: %i\n",i, extaddrEEPROM);
+					initADS1015(extaddrEEPROM);
+				}
+				if (strcmp(extdeviceEEPROM, "AOUT") == 0){
+					//extaddrEEPROM = strtol(extaddrEEPROM_temp, NULL, 16);
+					init_AOUT(extaddrEEPROM);
+				}
+
+				regreadstart += 64;
+				//only for debug
+				//printf("extension %i: %i\n", i, extaddrEEPROM[i]);
+			}
+			//The mainboard EEPROM must be unbind
+			EEPROMinit(1, 54);
 	//unbind EEPROM from
 	//sprintf(command, "/usr/lib/cgi-bin/PT100handler i");
 	//system(command);

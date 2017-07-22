@@ -2,13 +2,15 @@
  * Program to update the PT1000 values and
  * to set the wire length offset.
  * 
- * 26.07.2016
+ * 20.07.2017
  * Johannes Strasser
  * 
- * www.strasys.at
+ * www.wistcon.at
  */
 
 sortoutcache = new Date();
+var PT1000Num;
+//var getCookieData;
 
 function getPT1000Data(setget, url, cfunc, senddata){
 	xhttp = new XMLHttpRequest();
@@ -18,6 +20,37 @@ function getPT1000Data(setget, url, cfunc, senddata){
 	xhttp.send(senddata);
 }
 
+function getURLparms(callback){
+	var parmURL = window.location.search.substring(1);
+	vars = parmURL.split("&");	
+	getCookie(vars[1], function(result){	
+		if (result == 'PT1000'){
+			getCookie(vars[2], function(result1){
+				PT1000Num = result1;
+				callback();
+			});	
+		} else {
+			window.location.replace("hardware.html");
+		}
+	});		
+}
+
+function getStatusLogin(callback1){
+		getPT1000Data("post","userLogStatus.php",function()
+		{
+			if (xhttp.readyState==4 && xhttp.status==200)
+			{
+			var LogStatus = JSON.parse(xhttp.responseText); 
+			
+			Log = [	(LogStatus.loginstatus),
+				(LogStatus.adminstatus)
+			               ];
+				if (callback1){
+				callback1();
+				}
+			}
+		});		
+}
 
 function getPT1000values(callback1){
 		getPT1000Data("post","PT1000handler.php",function()
@@ -38,25 +71,24 @@ function getPT1000values(callback1){
 				callback1();
 				}
 			}
-		},"setgetPT1000handler=g");		
+		},"setgetPT1000handler=g"+
+		  "&PT1000ext="+PT1000Num);		
 }
 
 function getPT1000XMLData(callback4){
-	getPT1000Data("GET","VDF.xml?sortoutcache="+sortoutcache.valueOf(),function(){
+	getPT1000Data("POST", "PT1000handler.php", function(){
 		if (xhttp.readyState==4 && xhttp.status==200){
-			var getPT1000XML = xhttp.responseXML;
-			var w = getPT1000XML.getElementsByTagName("PT1000");
-			var z = w.length;
-			var i=0;
-			for (i=0; i<z; i++){
-			document.getElementById("labelPT1000"+i).innerHTML = w[i].getElementsByTagName("PT1000Name")[0].childNodes[0].nodeValue;
+			var getPT1000XML = JSON.parse(xhttp.responseText);
+			for (i=0; i<4; i++){
+				document.getElementById("labelPT1000"+i).innerHTML = getPT1000XML[i];
 			}
 			if (callback4){
 				callback4();
 			}
-		}
-		});
-	}
+		}		
+	}, "getXMLData=1&PT1000ext="+PT1000Num);
+	
+}
 
 function showPT1000values(){
 	getPT1000values(function(){
@@ -71,7 +103,7 @@ function showPT1000values(){
 			window.location.replace("login.html");
 			}
 	});
-	setTimeout(function(){showPT1000values()}, 1000);
+	setTimeout(function(){showPT1000values()}, 10000);
 }
 
 // This function is called after pressing the "Button Beschriftung ändern" button.
@@ -84,17 +116,32 @@ function getXMLDataInput(){
 		if (xhttp.readyState==4 && xhttp.status==200)
 			{
 				var getPT1000XML = xhttp.responseXML;
-				var w = getPT1000XML.getElementsByTagName("PT1000");
+				var w = getPT1000XML.getElementsByTagName("PT1000Name"+PT1000Num);
 				var z = w.length;
 				var i = 0;
 				for (i=0; i<z; i++){
-				document.getElementById("changePT1000Name"+i).value=w[i].getElementsByTagName("PT1000Name")[0].childNodes[0].nodeValue;	
+				document.getElementById("changePT1000Name"+i).value=w[i].childNodes[0].nodeValue;	
 				}
 			}
 	});
 	
 }
 
+
+function getCookie(cname, callback) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+	if (c.indexOf(name) == 0) {
+		return callback(c.substring(name.length, c.length));
+	        }
+    }
+	return callback("");
+}
 
 // After pressing the button "Änderungen speichern" in the button name change menue.
 // This function transfers the data to the server where it will be saved with the 
@@ -118,6 +165,7 @@ function setPT1000XMLDataInput(callback3){
 		"&PT1000Text1="+PT1000Text[1]+
 		"&PT1000Text2="+PT1000Text[2]+
 		"&PT1000Text3="+PT1000Text[3]+
+		"&PT1000ext=PT1000Name"+PT1000Num+
 		"&setPT1000NameFlag=1");
 	
 //	ButtonNameSave.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
@@ -154,8 +202,10 @@ function CollapseSetPT1000Name(){
 // load functions ad webpage opening
 function startatLoad(){
 	loadNavbar(function(){
-		getPT1000XMLData(function(){
-			showPT1000values();
+		getURLparms(function(extensionNum){
+			getPT1000XMLData(function(){
+				showPT1000values();
+			});
 		});
 	});
 }
@@ -165,8 +215,8 @@ window.onload=startatLoad();
 //active site roots.
 //Check of the operater is already loged on the system.
 function loadNavbar(callback1){
-	getPT1000values(function(){
-		if (PT1000temperaturevalues[5])
+	getStatusLogin(function(){
+		if (Log[1])
 		{
 			$(document).ready(function(){
 				$("#mainNavbar").load("navbar.html?ver=1", function(){

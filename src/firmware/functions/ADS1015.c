@@ -64,7 +64,7 @@ int getADCPT1000singleval(int channel, int I2Caddr) {
 	buf[0] = pointConfigReg;
 	buf[1] = configMSB | activeChannel;
 	buf[2] = configLSB;
-	file = i2c_open(I2C1_path, addr_ADC_ADS1015);
+	file = i2c_open(I2C1_path, I2Caddr);
 	i2c_write(file, buf, 3);
 	usleep(500);
 // point to conversion reg

@@ -13,13 +13,15 @@
 #include <errno.h>
 #include <math.h>
 #include "ADS1015.h"
+#include "24AA256-EEPROM.h"
+#include "I2C-handler.h"
 
 //calculation of temperature based on hardware design
-void calctemp_Celsius(int channel, double *t_celsius){
+void calctemp_Celsius(int channel, double *t_celsius, int exNo){
 	double A, B;
 	int AINval;
 	//get AINval from ADC
-	AINval = getADCPT1000singleval(channel);
+	AINval = getADCPT1000singleval(channel, exNo);
 //Hardware PT1000 Funktion EL-100-020-020
 	A = pow(10, -6);
 	B = AINval * AINval;
@@ -30,11 +32,11 @@ void calctemp_Celsius(int channel, double *t_celsius){
 	t_celsius[0] = -2.201 * A * B + 0.081*AINval-41.291;
 }
 
-void calctemp_Kelvin(int channel, double *t_kelvin){
+void calctemp_Kelvin(int channel, double *t_kelvin, int exNo){
 	double t_celsius, A, B;
 	int AINval;
 	//get AINval from ADC
-	AINval = getADCPT1000singleval(channel);
+	AINval = getADCPT1000singleval(channel, exNo);
 	//Hardware PT1000 Funktion
 	A = pow(10, -6);
 	B = AINval * AINval;
@@ -72,34 +74,67 @@ void round05(double *valtoberound, double *roundresult){
 
 int main(int argc, char *argv[], char *env[]){
 
-char input[3];
-double t_celsius[1], t_kelvin[1], t_celsiusround[1], averagetemp, temp;
-int i, channel, x;
+char input[3], eepromdata[255];
+double t_celsius[1], averagetemp, temp;
+int i, channel, x, busaddrext, extno;
 
 //read in arguments
 for (i=1;i<argc;i++){
 	sscanf(argv[i],"%c",&input[i]);
 }
-initADS1015();
+//initADS1015(0x48);
 
 switch (input[1]){
 case 'h':
 	printf("Description of function PT1000 handler:\n"
-			"PT1000handler [g] [Channel Number (0 = PT1000 channel 1, 1 = 2, etc.]\n"
+			"PT1000handler [g] [Channel Number (0 = PT1000 channel 1, 1 = 2, etc.] [Hardware extension]\n"
 			"	g => get\n"
 			"	h => help\n"
-			"	Channel => integer Number from 0 ... 3\n");
+			"	Channel => integer Number from 0 ... 3\n"
+			"	hw extension => integer 1 - 4");
 	break;
 case 'g':
-	if (argc != 3) {
+	if (argc != 4) {
 		fprintf(stderr, "PT1000handler: missing argument! => %s\n", strerror(errno));
 	} else {
 		channel = atoi(argv[2]);
+		extno = atoi(argv[3]);
+		unsigned int regreadstart = 256;
+		unsigned int regreadnumberbyte = 64;
+		char extaddrEEPROM_temp[64];
+		int extaddrEEPROM[4];
+		int i = 0;
+		for (i=0; i<4; i++){
+			EEPROMreadbytes(regreadstart, eepromdata, addr_EEPROMmain, I2C2_path, regreadnumberbyte);
+			char tempstring[70];
+			strcpy(tempstring, eepromdata);
+			const char delimiters[] = " :";
+			strtok(tempstring, delimiters);
+			strncpy(extaddrEEPROM_temp, strtok(NULL, delimiters), 2);
+			extaddrEEPROM[i] = strtol(extaddrEEPROM_temp, NULL, 16);
+			regreadstart += 64;
+			//only for debug
+			//printf("extension %i: %i\n", i, extaddrEEPROM[i]);
+		}
 
-		calctemp_Kelvin(channel, t_kelvin);
+		switch(extno){
+		case 1:
+			busaddrext = extaddrEEPROM[0];
+			break;
+		case 2:
+			busaddrext = extaddrEEPROM[1];
+			break;
+		case 3:
+			busaddrext = extaddrEEPROM[2];
+			break;
+		case 4:
+			busaddrext = extaddrEEPROM[3];
+			break;
+		}
+
 
 		for (x=0;x<20;x++){
-			calctemp_Celsius(channel, t_celsius);
+			calctemp_Celsius(channel, t_celsius, busaddrext);
 			temp = temp + t_celsius[0];
 			usleep(1000);
 		}
