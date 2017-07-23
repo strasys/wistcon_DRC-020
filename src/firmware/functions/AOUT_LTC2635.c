@@ -21,10 +21,14 @@
 
 int dacOUT1addr = 0b00000000;	//The last 4 bits describe the address codes
 int dacOUT2addr = 0b00000001;
+int dacOUT3addr = 0b00000010;
+int dacOUT4addr = 0b00000011;
 int dacALLaddr = 0b00001111;
 
 int dacOUT1 = 1;
 int dacOUT2 = 2;
+int dacOUT3 = 3;
+int dacOUT4 = 4;
 
 void init_AOUT(unsigned int addr_AOUT) {
 	char fopenModus[2] = {};
@@ -47,8 +51,8 @@ void init_AOUT(unsigned int addr_AOUT) {
 
 		f = fopen(AOUT_DIR, fopenModus);
 		fprintf(f,
-				"AOUT1=%4i:AOUT2=%4i",
-				0, 0);
+				"AOUT1=%4i:AOUT2=%4i:AOUT3=%4i:AOUT4=%4i",
+				0, 0, 0, 0);
 		fclose(f);
 
 	// Check if file has the defined uid (user ID) and gid (group ID)!
@@ -72,6 +76,8 @@ void init_AOUT(unsigned int addr_AOUT) {
 
 	AOUT_set_value_DACn(dacOUT1, 0, addr_AOUT);
 	AOUT_set_value_DACn(dacOUT2, 0, addr_AOUT);
+	AOUT_set_value_DACn(dacOUT3, 0, addr_AOUT);
+	AOUT_set_value_DACn(dacOUT4, 0, addr_AOUT);
 }
 //This set's the internal reference of the Digital
 //to Analog converter.
@@ -98,13 +104,23 @@ void AOUT_set_value_DACn(int DACchl, int value, unsigned int addr_AOUT) {
 	buf[1] = 0;
 	buf[2] = 0;
 
-	if (DACchl == 1) {
+	switch (DACchl){
+	case 1:
 		buf[0] = buf[0] | dacOUT1addr;
-		AOUT_write_value_DACn(DACchl,value);
-	}
-	if (DACchl == 2) {
+		AOUT_write_value_DACn(1,value);
+		break;
+	case 2:
 		buf[0] = buf[0] | dacOUT2addr;
-		AOUT_write_value_DACn(DACchl,value);
+		AOUT_write_value_DACn(2,value);
+		break;
+	case 3:
+		buf[0] = buf[0] | dacOUT3addr;
+		AOUT_write_value_DACn(3,value);
+		break;
+	case 4:
+		buf[0] = buf[0] | dacOUT4addr;
+		AOUT_write_value_DACn(4,value);
+		break;
 	}
 
 	if ((value < 0) | (value > 1024)) {
@@ -123,7 +139,7 @@ void AOUT_set_value_DACn(int DACchl, int value, unsigned int addr_AOUT) {
 }
 
 int AOUT_get_value_DACn(unsigned int channel) {
-	int AOUTn, AOUTval1, AOUTval2;
+	int AOUTn, AOUTval1, AOUTval2, AOUTval3, AOUTval4;
 	char DIR_AOUTvalue[255] = {};
 	FILE *f = NULL;
 
@@ -132,28 +148,31 @@ int AOUT_get_value_DACn(unsigned int channel) {
 		if (access(DIR_AOUTvalue, (R_OK | W_OK)) != -1) {
 					f = fopen(DIR_AOUTvalue, "r");
 					fscanf(f,
-							"AOUT1=%i:AOUT2=%i",
-							&AOUTval1, &AOUTval2);
+							"AOUT1=%i:AOUT2=%i:AOUT3=%i:AOUT4=%i",
+							&AOUTval1, &AOUTval2, &AOUTval3, &AOUTval4);
 					fclose(f);
-
-					if ((channel == 1) | (channel == 2)) {
-						if (channel == 1) {
-							AOUTn = AOUTval1;
-						}
-						else if (channel == 2) {
-							AOUTn = AOUTval2;
-						}
-					} else {
+					switch(channel){
+					case 1:
+						AOUTn = AOUTval1;
+						break;
+					case 2:
+						AOUTn = AOUTval2;
+						break;
+					case 3:
+						AOUTn = AOUTval3;
+						break;
+					case 4:
+						AOUTn = AOUTval4;
+						break;
+					default:
 						fprintf(stderr, "AOUT_get_value_DACn (LTC2635): Channel %i does not exist!\n",channel);
 						return -1;
+						break;
 					}
-
-
-				} else {
-					fprintf(stderr, "AOUT_get_value_DACn (LTC2635): File %s does not exist!\n",DIR_AOUTvalue);
-					return -1;
-				}
-
+			} else {
+				fprintf(stderr, "AOUT_get_value_DACn (LTC2635): File %s does not exist!\n",DIR_AOUTvalue);
+				return -1;
+			}
 	return (AOUTn);
 }
 
@@ -161,25 +180,33 @@ int AOUT_get_value_DACn(unsigned int channel) {
 //from the LTC2635 it is necessary to store the last set value.
 void AOUT_write_value_DACn(int channel, int value) {
 	FILE *f = NULL;
-	int AOUTval1, AOUTval2;
 	char DIR_AOUTvalue[255] = {};
 	char fopenModus[2] = {};
 
 	sprintf(DIR_AOUTvalue, AOUT_DIR);
-
-	if ((channel == 1) || (channel == 2)){
-		if (channel == 1) {
-			AOUTval1 = value;
-			AOUTval2 = AOUT_get_value_DACn(2);
-		}
-		else if (channel == 2) {
-			AOUTval1 = AOUT_get_value_DACn(1);
-			AOUTval2 = value;
-		}
+	//read file to get current set values
+	int i = 0, AOUTvals[5];
+	for(i=1;i<5;i++){
+		AOUTvals[i] = AOUT_get_value_DACn(i);
 	}
-	else
-	{
+
+
+	switch (channel){
+	case 1:
+		AOUTvals[1] = value;
+		break;
+	case 2:
+		AOUTvals[2]= value;
+		break;
+	case 3:
+		AOUTvals[3] = value;
+		break;
+	case 4:
+		AOUTvals[4] = value;
+		break;
+	default:
 		fprintf(stderr, "AOUT_write_value_DACn (LTC2635): wrong channel number %i\n", channel);
+		break;
 	}
 
 	//Check if the file exists already.
@@ -191,8 +218,8 @@ void AOUT_write_value_DACn(int channel, int value) {
 
 	f = fopen(DIR_AOUTvalue, fopenModus);
 	fprintf(f,
-			"AOUT1=%4i:AOUT2=%4i",
-			AOUTval1, AOUTval2);
+			"AOUT1=%4i:AOUT2=%4i:AOUT3=%4i:AOUT4=%4i",
+			AOUTvals[1], AOUTvals[2], AOUTvals[3], AOUTvals[4]);
 	fclose(f);
 
 }

@@ -9,7 +9,10 @@
  */
 
 sortoutcache = new Date();
-var PT1000Num;
+//PT1000Num is to identify how mainy PT1000 cards are used in paralel
+var PT1000Num; 
+//Is the number of the extension the card is put into.
+var extNum;
 //var getCookieData;
 
 function getPT1000Data(setget, url, cfunc, senddata){
@@ -22,7 +25,23 @@ function getPT1000Data(setget, url, cfunc, senddata){
 
 function getURLparms(callback){
 	var parmURL = window.location.search.substring(1);
-	vars = parmURL.split("&");	
+	vars = parmURL.split("&");
+	//get extension Number 
+	switch(vars[1]){
+		case 'extension1':
+			extNum = 1;
+			break;
+		case 'extension2':
+			extNum = 2;
+			break;
+		case 'extension3':
+			extNum = 3;
+			break;
+		case 'extension4':
+			extNum = 4;
+			break;
+	}
+		
 	getCookie(vars[1], function(result){	
 		if (result == 'PT1000'){
 			getCookie(vars[2], function(result1){
@@ -72,7 +91,7 @@ function getPT1000values(callback1){
 				}
 			}
 		},"setgetPT1000handler=g"+
-		  "&PT1000ext="+PT1000Num);		
+		  "&PT1000ext="+extNum);		
 }
 
 function getPT1000XMLData(callback4){

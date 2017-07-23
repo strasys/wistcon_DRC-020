@@ -32,7 +32,8 @@ void init(void){
 	//char command[255];
 	init_RTC(I2C1_path);
 	init_GPIO(2);
-
+	//The mainboard EEPROM must be unbind
+	EEPROMinit(1, 54);
 	/*
 	 * Read mainboard EEPROM - to detect the bus addresses and
 	 * devices added to the extension slots.
@@ -60,7 +61,7 @@ void init(void){
 					initADS1015(extaddrEEPROM);
 				}
 				if (strcmp(extdeviceEEPROM, "AOUT") == 0){
-					//extaddrEEPROM = strtol(extaddrEEPROM_temp, NULL, 16);
+					extaddrEEPROM = strtol(extaddrEEPROM_temp, NULL, 16);
 					init_AOUT(extaddrEEPROM);
 				}
 
@@ -68,11 +69,7 @@ void init(void){
 				//only for debug
 				//printf("extension %i: %i\n", i, extaddrEEPROM[i]);
 			}
-			//The mainboard EEPROM must be unbind
-			EEPROMinit(1, 54);
-	//unbind EEPROM from
-	//sprintf(command, "/usr/lib/cgi-bin/PT100handler i");
-	//system(command);
+
 }
 
 void getFormatForDate(char * pDateTime) {

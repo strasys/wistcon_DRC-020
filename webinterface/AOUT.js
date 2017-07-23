@@ -1,13 +1,17 @@
 /**
- * Program to update the AIn and AOut values.
+ * Program to update the AOut values.
  * 
- * 06.05.2015
+ * 23.07.2017
  * Johannes Strasser
  * 
- * www.strasys.at
+ * www.wistcon.at
  */
+//Number of AOUT cards are used in parallel
+var AOUTNum;
+//Number of Extension the card is into
+var extNum;
 
-function setgetAnalog(setget, url, cfunc, senddata){
+function setgetServer(setget, url, cfunc, senddata){
 	xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = cfunc;
 	xhttp.open(setget,url,true);
@@ -15,29 +19,58 @@ function setgetAnalog(setget, url, cfunc, senddata){
 	xhttp.send(senddata);
 }
 
-function getAIn(callback1){
-		setgetAnalog("post","AINOUThandler.php",function()
-			{
-				if (xhttp.readyState==4 && xhttp.status==200)
-				{
-				var getAIn = JSON.parse(xhttp.responseText); 
-				
-				AnalogIN = [(getAIn.INvalue1),
-					(getAIn.INvalue2),
-					(getAIn.INvalue3),
-					(getAIn.INvalue4),
-				            (getAIn.loginstatus),
-				            (getAIn.adminstatus)
-				               ];
-					if (callback1){
-						callback1();
-					}
-				}
-			},"setgetAnalog=g&InOut=I");		
+function getStatusLogin(callback1){
+	setgetServer("post","userLogStatus.php",function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
+		{
+		var LogStatus = JSON.parse(xhttp.responseText); 
+			
+		Log = [	(LogStatus.loginstatus),
+			(LogStatus.adminstatus)
+	               ];
+		if (callback1){
+			callback1();
+		}
+		}
+	});		
 }
 
+function getURLparms(callback){
+	var parmURL = window.location.search.substring(1);
+	vars = parmURL.split("&");
+	//get extension Number 
+	
+	switch(vars[1]){
+		case 'extension1':
+			extNum = 1;
+			break;
+		case 'extension2':
+			extNum = 2;
+			break;
+		case 'extension3':
+			extNum = 3;
+			break;
+		case 'extension4':
+			extNum = 4;
+			break;
+	}
+
+	getCookie(vars[1], function(result){	
+		if (result == 'AOUT'){
+			getCookie(vars[2], function(result1){
+				AOUTnum = result1;
+				callback();
+			});	
+		} else {
+			window.location.replace("hardware.html");
+		}
+	});		
+}
+
+
 function setAOUT(channel, AOUTvalue, callback2){
-	setgetAnalog("post","AINOUThandler.php",function()
+	setgetServer("post","AOUT.php",function()
 		{
 			if (xhttp.readyState==4 && xhttp.status==200)
 			{
@@ -45,26 +78,20 @@ function setAOUT(channel, AOUTvalue, callback2){
 					callback2();
 				}
 			}
-		},"setgetAnalog=s&InOut=O&AOUTchannel="+channel+"&AOUTvalue="+AOUTvalue);		
+		},"setgetAnalogOUT=s&AOUTchannel="+channel+"&AOUTvalue="+AOUTvalue+"&extNum="+extNum);		
 }
 
 function getAOUT(callback4){
-	setgetAnalog("post","AINOUThandler.php",function()
+	setgetServer("post","AOUT.php",function()
 		{
 			if (xhttp.readyState==4 && xhttp.status==200)
 			{
-				var getAOUT = JSON.parse(xhttp.responseText); 
-				
-				AnalogOUT = [(getAOUT.OUTvalue1),
-					(getAOUT.OUTvalue2),
-				        (getAOUT.loginstatus),
-				        (getAOUT.adminstatus)
-				               ];
+				AnalogOUT = JSON.parse(xhttp.responseText);
 				if (callback4){
 					callback4();
 				}
 			}
-		},"setgetAnalog=g&InOut=O");		
+		},"setgetAnalogOUT=g");		
 }
 
 
@@ -82,6 +109,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 var $rangeAnalogOUT1 = $("#AnalogOUTSlider1");
 var $rangeAnalogOUT2 = $("#AnalogOUTSlider2");
+var $rangeAnalogOUT3 = $("#AnalogOUTSlider3");
+var $rangeAnalogOUT4 = $("#AnalogOUTSlider4");
 
 $.getScript("js/ion.rangeSlider.js", function(){
 	   $rangeAnalogOUT1.ionRangeSlider({
@@ -101,6 +130,24 @@ $.getScript("js/ion.rangeSlider.js", function(){
 		   grid: true,
 		   force_edges: true 
 	   });
+
+	 $rangeAnalogOUT3.ionRangeSlider({
+		   type: "single",
+		   min: 0,
+		   max: 1023,
+		   step : 11,
+		   grid: true,
+		   force_edges: true 
+	   });
+	 $rangeAnalogOUT4.ionRangeSlider({
+		   type: "single",
+		   min: 0,
+		   max: 1023,
+		   step : 11,
+		   grid: true,
+		   force_edges: true 
+	   });
+
 	   
 	});
 
@@ -116,46 +163,44 @@ $rangeAnalogOUT2.on("change", function(){
 	setAOUT(2, slider2val);
 	});
 
+$rangeAnalogOUT3.on("change", function(){
+	var $this3 = $(this),
+		slider3val = $this3.prop("value");
+	setAOUT(3, slider3val);
+	});
 
+$rangeAnalogOUT4.on("change", function(){
+	var $this4 = $(this),
+		slider4val = $this4.prop("value");
+	setAOUT(4, slider4val);
+	});
 
-
-/*
 function showAOUTvalues(){
-getAOUT(function(){
-	//	var slider = $("#range_50").data("ionRangeSlider");
-		slider.update({
-			from: AnalogOUT[0]
-	$("#slider1val").text(AnalogOUT[0]);
-		});
-	setTimeout(function(){showAOUTvalues()}, 1000);
-}
-*/
-
-function showAINOUTvalues(){
-	
-	getAIn(function(){
-		$("#badgeAIN1").text(AnalogIN[0]);
-		$("#badgeAIN2").text(AnalogIN[1]);
-		
+			
 	getAOUT(function(){
 		var slider1 = $("#AnalogOUTSlider1").data("ionRangeSlider");
 		var slider2 = $("#AnalogOUTSlider2").data("ionRangeSlider");
+		var slider3 = $("#AnalogOUTSlider3").data("ionRangeSlider");
+		var slider4 = $("#AnalogOUTSlider4").data("ionRangeSlider");
+
 		
 			
-			slider2.update({
-					from: AnalogOUT[1]
-				});
 			slider1.update({
 					from: AnalogOUT[0]
+				});
+			slider2.update({
+					from: AnalogOUT[1]
 			});
-		//	$("#slider1val").text(AnalogOUT[0]);
-		//	$("#slider2val").text(AnalogOUT[1]);
-			
+			slider3.update({
+					from: AnalogOUT[2]
+				});
+			slider4.update({
+					from: AnalogOUT[3]
+				});
+
 		});
-				
-	});
 	
-	setTimeout(function(){showAINOUTvalues()}, 1000);
+	setTimeout(function(){showAOUTvalues()}, 10000);
 }
 
 //load functions at webpage opening
@@ -163,7 +208,7 @@ function startatLoad()
 {
 	loadNavbar(function()
 	{
-		showAINOUTvalues();
+		showAOUTvalues();
 	});
 }
 window.onload=startatLoad();
@@ -173,23 +218,17 @@ window.onload=startatLoad();
 //Check if the operater is already loged on the system.
 function loadNavbar(callback1)
 {
-	getAIn(function()
-	{
-		if(AnalogIN[2])
+	getStatusLogin(function(){
+		if(Log[1])
 		{
 			$(document).ready(function()
 			{
-				$("#mainNavbar").load("navbar.html", function()
+				$("#mainNavbar").load("navbar.html?ver=1", function()
 				{
-					$("#navbarFunction").addClass("active");
-					$("#navbarItemAIO").addClass("active");
+					$("#navbarSet").addClass("active");
+					$("#navbar_set span").toggleClass("nav_notactive nav_active");
 					$("#navbarlogin").hide();
-					$("#navbarSet").hide();
-					
-					if(AnalogIN[3])
-					{
-						$("#navbarSet").show();
-					}
+					$("#navbarSet").show();
 				});
 			});
 		}
