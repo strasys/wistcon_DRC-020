@@ -89,7 +89,7 @@ function sethardwarehtmlinterface(callback){
 				});
 				break;
 			case "AOUT":
-				counter_PT1000 += 1;
+				counter_AOUT += 1;
 				idData = "AOUT"+counter_AOUT;
 				header = "Analoge Ausgänge";
 				description = "Übersicht der Analogen Ausgänge<br>Änderung Bezeichnung";
@@ -102,7 +102,7 @@ function sethardwarehtmlinterface(callback){
 				});
 				break;
 			case "AIN":
-				counter_PT1000 += 1;
+				counter_AIN += 1;
 				idData = "AIN"+counter_AIN;
 				header = "Analoge Eingänge";
 				description = "Übersicht der Analogen Eingänge<br>Änderung Bezeichnung";

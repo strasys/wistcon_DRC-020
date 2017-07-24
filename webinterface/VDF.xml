@@ -122,7 +122,7 @@
 	<PT1000Name4>PT1000 4</PT1000Name4>
 </PT1000>
 <AIN>
-	<AINName>Test</AINName>
+	<AINName>AIN 1</AINName>
 </AIN>
 <AIN>
 	<AINName>AIN 2</AINName>
@@ -134,17 +134,42 @@
 	<AINName>AIN 4</AINName>
 </AIN>
 <AOUT>
-	<AOUTName>AOUT 1</AOUTName>
+	<AOUTName1>AOUT 1</AOUTName1>
 </AOUT>
 <AOUT>
-	<AOUTName>AOUT 2</AOUTName>
+	<AOUTName1>AOUT 2</AOUTName1>
 </AOUT>
 <AOUT>
-	<AOUTName>AOUT 3</AOUTName>
+	<AOUTName1>AOUT 3</AOUTName1>
 </AOUT>
 <AOUT>
-	<AOUTName>AOUT 4</AOUTName>
+	<AOUTName1>AOUT 4</AOUTName1>
 </AOUT>
+<AOUT>
+	<AOUTName2>AOUT 1</AOUTName2>
+</AOUT>
+<AOUT>
+	<AOUTName2>AOUT 2</AOUTName2>
+</AOUT>
+<AOUT>
+	<AOUTName2>AOUT 3</AOUTName2>
+</AOUT>
+<AOUT>
+	<AOUTName2>AOUT 4</AOUTName2>
+</AOUT>
+<AOUT>
+	<AOUTName3>AOUT 1</AOUTName3>
+</AOUT>
+<AOUT>
+	<AOUTName3>AOUT 2</AOUTName3>
+</AOUT>
+<AOUT>
+	<AOUTName3>AOUT 3</AOUTName3>
+</AOUT>
+<AOUT>
+	<AOUTName3>AOUT 4</AOUTName3>
+</AOUT>
+
 <CleaningInterval>
 	<Start>07:00</Start>
 	<Stop>08:30</Stop>

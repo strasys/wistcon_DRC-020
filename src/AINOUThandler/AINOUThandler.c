@@ -71,7 +71,7 @@ int main(int argc, char *argv[], char *env[]){
 	switch (input[1]){
 	case 'h':
 		printf("Description of function AINOUThandler handler:\n"
-				"AINOUThandler [g,s] [I,O] [channel] Option[AOUT-value] Option [Hardware extension]\n"
+				"AINOUThandler [g,s] [I,O] [channel] Option[AOUT-value] [Hardware extension]\n"
 				"	g => get\n"
 				"	h => help\n"
 				"   I => Analog IN\n"
@@ -88,7 +88,10 @@ int main(int argc, char *argv[], char *env[]){
 			break;
 		case 'O':
 			channel = atoi(argv[3]);
-			AOUTvalue = AOUT_get_value_DACn(channel);
+			extno = atoi(argv[4]);
+			unsigned int busaddrext[1];
+			getbusaddrExt(extno, busaddrext);
+			AOUTvalue = AOUT_get_value_DACn(channel,busaddrext[0]);
 			printf("%i\n", AOUTvalue);
 			break;
 		default:

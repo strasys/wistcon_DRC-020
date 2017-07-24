@@ -9,13 +9,15 @@ session_start();
 include_once ('authentification.inc.php');
 
 unset($arr);
+unset($extNum);
 
-if (isset($_POST["setgetAnalogOUT"])){
+if (isset($_POST["setgetAnalogOUT"]) && isset($_POST["extNum"])){
 	if (($_POST["setgetAnalogOUT"] == 'g') && $adminstatus)
 	{
+		$extNum = $_POST["extNum"];
 		for ($i=1; $i<5; $i++){
 		$channel = $i;
-		exec("flock /tmp/flockAINOUThandler /usr/lib/cgi-bin/AINOUThandler g O $channel", $output);
+		exec("flock /tmp/flockAINOUThandler /usr/lib/cgi-bin/AINOUThandler g O $channel $extNum", $output);
 		}
 		for ($i=0; $i<4; $i++){
 			$arr[] = $output[$i];
@@ -34,5 +36,14 @@ if (isset($_POST["setgetAnalogOUT"]) && isset($_POST["AOUTchannel"]) && isset($_
 	}
 }
 
+if (isset($_POST["setTextFlag"]) && isset($_POST["AOUTNumtext"])){
+	if (($_POST["setTextFlag"] == '1') && $adminstatus){
+		$xml=simplexml_load_file("VDF.xml") or die ("Error: Cannot create object");
+		for($i=0; $i<4; $i++){
+			$xml->AOUT[$i]->$_POST["AOUTNumtext"] = $_POST["AOUTText".(string)$i];
+		}
+		echo $xml->asXML("VDF.xml");	
+	}
+}
 
 ?>

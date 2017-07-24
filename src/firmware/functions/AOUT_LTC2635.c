@@ -43,20 +43,22 @@ void init_AOUT(unsigned int addr_AOUT) {
 
 	AOUT_set_internal_reference(addr_AOUT);
 	//For the first call the txt file will be generated with val = 0
-	if (access(AOUT_DIR, (R_OK | W_OK)) != -1) {
+	char DIR[255];
+	sprintf(DIR,"%s%i.txt",AOUT_DIR,addr_AOUT);
+	if (access(DIR, (R_OK | W_OK)) != -1) {
 				sprintf(fopenModus, "r+");
 			} else {
 				sprintf(fopenModus, "w");
 			}
 
-		f = fopen(AOUT_DIR, fopenModus);
+		f = fopen(DIR, fopenModus);
 		fprintf(f,
 				"AOUT1=%4i:AOUT2=%4i:AOUT3=%4i:AOUT4=%4i",
 				0, 0, 0, 0);
 		fclose(f);
 
 	// Check if file has the defined uid (user ID) and gid (group ID)!
-			filedesc = open(AOUT_DIR, O_RDWR);
+			filedesc = open(DIR, O_RDWR);
 
 			getinfofile(&filedesc, uidowner, gidowner, fileprotection);
 
@@ -107,19 +109,19 @@ void AOUT_set_value_DACn(int DACchl, int value, unsigned int addr_AOUT) {
 	switch (DACchl){
 	case 1:
 		buf[0] = buf[0] | dacOUT1addr;
-		AOUT_write_value_DACn(1,value);
+		AOUT_write_value_DACn(1,value, addr_AOUT);
 		break;
 	case 2:
 		buf[0] = buf[0] | dacOUT2addr;
-		AOUT_write_value_DACn(2,value);
+		AOUT_write_value_DACn(2,value, addr_AOUT);
 		break;
 	case 3:
 		buf[0] = buf[0] | dacOUT3addr;
-		AOUT_write_value_DACn(3,value);
+		AOUT_write_value_DACn(3,value, addr_AOUT);
 		break;
 	case 4:
 		buf[0] = buf[0] | dacOUT4addr;
-		AOUT_write_value_DACn(4,value);
+		AOUT_write_value_DACn(4,value, addr_AOUT);
 		break;
 	}
 
@@ -138,12 +140,12 @@ void AOUT_set_value_DACn(int DACchl, int value, unsigned int addr_AOUT) {
 	i2c_close(file);
 }
 
-int AOUT_get_value_DACn(unsigned int channel) {
+int AOUT_get_value_DACn(unsigned int channel, unsigned int addr_AOUT) {
 	int AOUTn, AOUTval1, AOUTval2, AOUTval3, AOUTval4;
 	char DIR_AOUTvalue[255] = {};
 	FILE *f = NULL;
 
-		sprintf(DIR_AOUTvalue, AOUT_DIR);
+		sprintf(DIR_AOUTvalue,"%s%i.txt", AOUT_DIR, addr_AOUT);
 
 		if (access(DIR_AOUTvalue, (R_OK | W_OK)) != -1) {
 					f = fopen(DIR_AOUTvalue, "r");
@@ -178,16 +180,16 @@ int AOUT_get_value_DACn(unsigned int channel) {
 
 //Since there is no possibility to read the actual set value
 //from the LTC2635 it is necessary to store the last set value.
-void AOUT_write_value_DACn(int channel, int value) {
+void AOUT_write_value_DACn(int channel, int value, unsigned int addr_AOUT) {
 	FILE *f = NULL;
 	char DIR_AOUTvalue[255] = {};
 	char fopenModus[2] = {};
 
-	sprintf(DIR_AOUTvalue, AOUT_DIR);
+	sprintf(DIR_AOUTvalue,"%s%i.txt", AOUT_DIR, addr_AOUT);
 	//read file to get current set values
 	int i = 0, AOUTvals[5];
 	for(i=1;i<5;i++){
-		AOUTvals[i] = AOUT_get_value_DACn(i);
+		AOUTvals[i] = AOUT_get_value_DACn(i,addr_AOUT);
 	}
 
 

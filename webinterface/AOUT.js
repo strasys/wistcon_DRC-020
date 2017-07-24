@@ -10,6 +10,7 @@
 var AOUTNum;
 //Number of Extension the card is into
 var extNum;
+var sortoutcache = new Date();
 
 function setgetServer(setget, url, cfunc, senddata){
 	xhttp = new XMLHttpRequest();
@@ -59,13 +60,96 @@ function getURLparms(callback){
 	getCookie(vars[1], function(result){	
 		if (result == 'AOUT'){
 			getCookie(vars[2], function(result1){
-				AOUTnum = result1;
+				AOUTNum = result1;
 				callback();
 			});	
 		} else {
 			window.location.replace("hardware.html");
 		}
 	});		
+}
+
+function getCookie(cname, callback) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+	if (c.indexOf(name) == 0) {
+		return callback(c.substring(name.length, c.length));
+	        }
+    }
+	return callback("");
+}
+
+
+function getAOUTXMLData(callback){
+	setgetServer("GET", "VDF.xml?sortoutcache="+sortoutcache.valueOf(),function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
+			{
+				var getAOUTXML = xhttp.responseXML;
+				console.log(AOUTNum);
+				var w = getAOUTXML.getElementsByTagName("AOUTName"+AOUTNum);
+				var z = w.length;
+				var i = 0;
+				for (i=0; i<z; i++){
+				document.getElementById("labelAOUT"+i).innerHTML=w[i].childNodes[0].nodeValue;	
+				}
+				if (callback){
+					callback();
+				}
+			}
+	});
+	
+}
+
+function getXMLDataInput(callback){
+	setgetServer("GET", "VDF.xml?sortoutcache="+sortoutcache.valueOf(),function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
+			{
+				var getAOUTXML = xhttp.responseXML;
+				var w = getAOUTXML.getElementsByTagName("AOUTName"+AOUTNum);
+				var z = w.length;
+				var i = 0;
+				for (i=0; i<z; i++){
+				document.getElementById("changeAOUTName"+i).value=w[i].childNodes[0].nodeValue;	
+				}
+				if (callback){
+					callback();
+				}
+			}
+	});	
+}
+
+// After pressing the button "Änderungen speichern" in the button name change menue.
+// This function transfers the data to the server where it will be saved with the 
+// help of a php function.
+function setAOUTXMLDataInput(callback3){
+	
+	var AOUTText = [];
+	
+	for (i=0;i<4;i++){
+		AOUTText[i] = document.getElementById("changeAOUTName"+i).value;
+	}	
+		
+		setgetServer("post","AOUT.php",function()
+		{
+			if (xhttp.readyState==4 && xhttp.status==200)
+			{
+				callback3();
+			}
+		},
+		"AOUTText0="+AOUTText[0]+
+		"&AOUTText1="+AOUTText[1]+
+		"&AOUTText2="+AOUTText[2]+
+		"&AOUTText3="+AOUTText[3]+
+		"&setTextFlag=1&AOUTNumtext=AOUTName"+AOUTNum);
+	
+//	ButtonNameSave.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 }
 
 
@@ -91,7 +175,7 @@ function getAOUT(callback4){
 					callback4();
 				}
 			}
-		},"setgetAnalogOUT=g");		
+		},"setgetAnalogOUT=g&extNum="+extNum);		
 }
 
 
@@ -206,9 +290,12 @@ function showAOUTvalues(){
 //load functions at webpage opening
 function startatLoad()
 {
-	loadNavbar(function()
-	{
-		showAOUTvalues();
+	loadNavbar(function(){	
+		getURLparms(function(){
+			getAOUTXMLData(function(){
+				showAOUTvalues();
+			});
+		});
 	});
 }
 window.onload=startatLoad();
@@ -242,3 +329,33 @@ function loadNavbar(callback1)
 	}
 	});
 }
+
+//Show input fields to change Button Names
+function SetAOUTName(){
+	 $(document).ready(function(){
+		$("#setAOUTNameDiv").load("setAOUTName.html?ver=2", function(){
+			getXMLDataInput(function(){
+				$("#setAOUTNameDiv").show();
+				$("#showSetAOUTName").hide();	
+			});
+		});
+	 });
+}
+
+function SaveSetAOUTName(){
+		  setAOUTXMLDataInput(function(){
+				getAOUTXMLData();
+		  });
+}
+
+function CancelSetAOUTName(){
+		  getAOUTXMLDataInput();
+}
+
+function CollapseSetAOUTName(){
+		$("#setAINNameDiv").hide();
+		$("#showSetAINName").show();
+		location.reload(true);
+		 
+}
+
