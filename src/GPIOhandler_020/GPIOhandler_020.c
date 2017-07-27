@@ -30,7 +30,8 @@ int main(int argc, char *argv[], char *env[]){
 	if ((setget == 's')){
 		Num = atoi(argv[2]);
 		Value = atoi(argv[3]);
-
+		int offset = 12;
+		Num = Num + offset;
 		//Num = GPIOnum;
 		//Value = GPIOvalue;
 		printf("Num=%d Value=%d\n",Num, Value);
@@ -63,6 +64,7 @@ int main(int argc, char *argv[], char *env[]){
 
 	if ((setget == 'h')){
 		printf(" Pin - Numbering as used at GPIOhandler_020: \n"
+				"Input = 0 - 11\n"
 				"P8_18 65 INPUT IN1 \n"
 				"P8_17 27 INPUT IN2 \n"
 				"P8_16 46 INPUT IN3 \n"
@@ -75,6 +77,7 @@ int main(int argc, char *argv[], char *env[]){
 				"P8_09 69 INPUT IN10 \n"
 				"P8_08 67 INPUT IN11 \n"
 				"P8_07 66 INPUT IN12 \n"
+				"Output = 0 - 11 => usable pins\n"
 				"P8_27 86 OUTPUT OUT1 \n"
 				"P8_28 88 OUTPUT OUT2 \n"
 				"P8_29 87 OUTPUT OUT3 \n"
@@ -87,6 +90,8 @@ int main(int argc, char *argv[], char *env[]){
 				"P8_44 73 OUTPUT OUT10 \n"
 				"P8_45 70 OUTPUT OUT11 \n"
 				"P8_46 71 OUTPUT OUT12 \n"
+				"Indicator lights at the front:\n"
+				"Output = 12 - 15\n"
 				"P9_14 50 OUTPUT RUN \n"
 				"P9_15 48 OUTPUT ERROR \n"
 				"P9_23 49 OUTPUT DIGIOUT_UART2 \n"
