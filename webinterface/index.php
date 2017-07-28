@@ -65,8 +65,8 @@ if (($loginstatus == false) && ($getData == $get)){
 	$PT1000ex1 = new PT1000();
 	$GPIO = new GPIO();
 
-	$temperature = $PT1000ex1->getPT1000(0,1);
-	$temperature = $PT1000ex1->getPT1000(1,1);
+	$temperature[] = $PT1000ex1->getPT1000(0,1);
+	$temperature[] = $PT1000ex1->getPT1000(1,1);
 
 //get GPIO out status
 	unset($gpioOUT);

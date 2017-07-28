@@ -17,15 +17,15 @@ $('#navbar').on('hidden.bs.collapse', function () {
     });
 
 $("#navbar_function").on('click', function(){
-	window.location.replace("poolfunctions.html");
+	window.location.replace("/pool_function/poolfunctions.html");
 });
 
 $("#navbar_set").on('click', function(){
-	window.location.replace("poolset.html?ver=1");
+	window.location.replace("/set/set.html?ver=1");
 });
 
 $("#navbar_home").on('click', function(){
-	window.location.replace("index.html?ver=2");
+	window.location.replace("/index.html?ver=2");
 });
 
 
