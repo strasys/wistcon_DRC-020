@@ -15,7 +15,7 @@ $errorFile = 1; //If errorFile variable = -1 than fopen is False
 $errorUsername = 1; //If username does not exist variable = -1
 $errorPassword = 1; //If password is wrong value = -1
 
-$userfile = fopen("user.txt","r"); 
+$userfile = fopen("/var/secure/user.txt","r"); 
 
 	if ($userfile == FALSE)
 	{
@@ -105,7 +105,7 @@ $userfile = fopen("user.txt","r");
 	//	}
 		
 		
-		$staylogedinfile = fopen ('userlogedin.txt','r');
+		$staylogedinfile = fopen ('/var/secure/userlogedin.txt','r');
 		if ($staylogedinfile)
 		{
 		
@@ -127,7 +127,7 @@ $userfile = fopen("user.txt","r");
 			{
 				unset($arstaylogedinfile);	
 				$arstaylogedinfile = array();
-				$ar = file("userlogedin.txt");
+				$ar = file("/var/secure/userlogedin.txt");
 				
 				$i = 0;
 				foreach ($ar as $line)
@@ -146,7 +146,7 @@ $userfile = fopen("user.txt","r");
 				
 				$arstaylogedinfile[$key + 1] = $salt;
 				
-				$f = fopen("userlogedin.txt", 'w');
+				$f = fopen("/var/secure/userlogedin.txt", 'w');
 				
 				$n = count($arstaylogedinfile);
 				if ($f) //add error code
@@ -162,7 +162,7 @@ $userfile = fopen("user.txt","r");
 			}
 			else
 			{
-			$staylogedinfile = fopen ("userlogedin.txt","a");
+			$staylogedinfile = fopen ("/var/secure/userlogedin.txt","a");
 			fwrite($staylogedinfile, $username.":".$salt."\n");
 			fclose($staylogedinfile);
 			}

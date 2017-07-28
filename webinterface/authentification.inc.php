@@ -24,7 +24,7 @@ elseif(isset($_COOKIE['rememberme']) && !isset($_SESSION['username']))
 {
 	list($username, $token, $mac) = explode(":", $_COOKIE['rememberme']);
 
-	$staylogedinfile = fopen ("userlogedin.txt","r");
+	$staylogedinfile = fopen ("/var/secure/userlogedin.txt","r");
 	if ($staylogedinfile)
 	{
 		//check if user does exist in "userlogedin.txt"

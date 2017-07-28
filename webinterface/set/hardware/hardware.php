@@ -8,11 +8,13 @@
 include_once ('/var/www/privateplc_php.ini.php');
 session_start();
 include_once ('/var/www/authentification.inc.php');
+include_once "/var/www/hw_classes/EEPROM.inc.php";
 
-	$arr = array(	'loginstatus' => $loginstatus,
-			'adminstatus' => $adminstatus,
-		);
+$extensionAllocation = new EEPROM();
 
-	echo json_encode($arr);
+$extensions = $extensionAllocation->getExtensionAllocation();
+
+
+echo json_encode($extensions);
 
 ?>

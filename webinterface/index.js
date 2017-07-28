@@ -20,15 +20,15 @@ function setgetrequestServer(setget, url, cfunc, senddata){
 
 
 function getStatusLogin(callback1){
-	setgetrequestServer("post","index.php",function()
+	setgetrequestServer("post","/index.php",function()
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
 			var getHomeLogin = JSON.parse(xhttp.responseText); 
 		
 			LoginStatus = [(getHomeLogin.loginstatus),
-		               (getHomeLogin.adminstatus)
-		               ];
+		              		 (getHomeLogin.adminstatus)
+			               ];
 
 			if (callback1){
 			callback1();
@@ -39,7 +39,7 @@ function getStatusLogin(callback1){
 
 
 function getServerData(callback2){
-	setgetrequestServer("post","index.php",function()
+	setgetrequestServer("post","/index.php",function()
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
@@ -68,7 +68,7 @@ function getServerData(callback2){
 }
 
 function setServerData(OutNumber,OutValue,callback5){
-	setgetrequestServer("post","index.php",function()
+	setgetrequestServer("post","/index.php",function()
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
@@ -82,7 +82,7 @@ function setServerData(OutNumber,OutValue,callback5){
 
 function getXMLData(callback4){
 	var getXMLData;
-	setgetrequestServer("GET","VDF.xml?sortoutcache="+sortoutcache.valueOf(),function(){
+	setgetrequestServer("GET","/VDF.xml?sortoutcache="+sortoutcache.valueOf(),function(){
 		
 		if (xhttp.readyState==4 && xhttp.status==200){
 			var getXMLData = xhttp.responseXML;
@@ -90,8 +90,8 @@ function getXMLData(callback4){
 			var digiOUT = getXMLData.getElementsByTagName("GPIOOUT");
 			var PT1000 = getXMLData.getElementsByTagName("PT1000");
 
-			document.getElementById("labelTempPool").innerHTML = PT1000[0].getElementsByTagName("PT1000Name")[0].childNodes[0].nodeValue;
-			document.getElementById("labelTempOutside").innerHTML = PT1000[1].getElementsByTagName("PT1000Name")[0].childNodes[0].nodeValue;
+			document.getElementById("labelTempPool").innerHTML = PT1000[0].getElementsByTagName("PT1000Name1")[0].childNodes[0].nodeValue;
+			document.getElementById("labelTempOutside").innerHTML = PT1000[1].getElementsByTagName("PT1000Name1")[0].childNodes[0].nodeValue;
 			document.getElementById("buttonOutText2").innerHTML = digiOUT[2].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
 			document.getElementById("buttonOutText3").innerHTML = digiOUT[3].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
 			document.getElementById("labelStatusPump").innerHTML = digiOUT[1].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
@@ -189,7 +189,7 @@ function refresh(){
 	getServerData(function(){
 		setValues(function(){
 			if ((StatusData[0] == false) && (positionPanelCurrent > 1)){
-				window.location.replace("index.html");
+				window.location.replace("/index.html");
 			}
 			setTimeout(function(){
 				refresh();
@@ -257,7 +257,7 @@ function PanelView(position, callback){
 
 }
 
-// load functions ad webpage opening
+// load functions and webpage opening
 function startatLoad(){
 	ViewatLoad(function(){
 		loadNavbar(function(){
@@ -279,7 +279,7 @@ function loadNavbar(callback3){
 	getStatusLogin(function(){
 		if(LoginStatus[0]){	
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html?ver="+sortoutcache.valueOf(), function(){
+				$("#mainNavbar").load("/navbar.html?ver=1", function(){
 					$("#navbarHome").addClass("active");
 					$("#navbar_home span").toggleClass("nav_notactive nav_active");
 					$("#navbarlogin").hide();
@@ -298,7 +298,7 @@ function loadNavbar(callback3){
 		else
 		{
 			$(document).ready(function(){
-				$("#mainNavbar").load("navbar.html?ver="+sortoutcache.valueOf(), function(){
+				$("#mainNavbar").load("/navbar.html?ver=1", function(){
 					$("#navbarHome").addClass("active");
 					$("#navbar_home span").toggleClass("nav_notactive nav_active");
 					$("#navbarlogout").hide();

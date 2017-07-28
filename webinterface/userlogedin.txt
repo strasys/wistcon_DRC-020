@@ -1,4 +1,0 @@
-Hannes:$2y$15$Wt7iWy/ftPSGdhRAFwabyO/iyTU=$
-admin:$2y$15$AkYAaHkNztNe7CSxyVIqnfo2t+M=$
-strajoha:$2y$15$7HBQz/OOlQoJ/lbpL9UEVtb9NxY=$
-workshop:$2y$15$keA9WvqsVdcz34Aw9D9kvkPDNy8=$

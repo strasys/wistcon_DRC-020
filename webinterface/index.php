@@ -5,9 +5,12 @@
 //ini_set('display_startup_errors', 1);
 //
 
-include_once ('privateplc_php.ini.php');
+include_once ('/var/www/privateplc_php.ini.php');
 session_start();
-include_once ('authentification.inc.php');
+include_once ('/var/www/authentification.inc.php');
+include_once ('/var/www/hw_classes/PT1000.inc.php');
+include_once ('/var/www/hw_classes/GPIO.inc.php');
+
 unset($getLoginStatus, $getData);
 $getLoginStatus = $_POST['getLoginStatus'];
 $getData = $_POST['getData'];
@@ -19,8 +22,12 @@ $get = "g";
 $set = "s";
 
 if (($loginstatus == true) && ($getData == $get)){
-	exec("flock /tmp/PT1000handlerlock /usr/lib/cgi-bin/PT1000handler_020 g 0", $temperature);
-	exec("flock /tmp/PT1000handlerlock /usr/lib/cgi-bin/PT1000handler_020 g 1", $temperature);	
+	$PT1000ex1 = new PT1000();
+	$GPIO = new GPIO();
+
+	$temperature[] = $PT1000ex1->getPT1000(0,1);
+	$temperature[] = $PT1000ex1->getPT1000(1,1);
+
 //get Composer status
 	$statusFile = fopen("/tmp/composerstatus.txt", "r");
 	if ($statusFile == false)
@@ -44,27 +51,34 @@ if (($loginstatus == true) && ($getData == $get)){
 			$runstop = 1; 
 			break;
 	}
-//get GPIO out status	
-	exec(" /usr/lib/cgi-bin/GPIOhandler_020 g O", $gpioOUT);
+
+//get GPIO out status
+	$gpioOUT = $GPIO->getOut();
 //get GPIO in status
-	exec(" /usr/lib/cgi-bin/GPIOhandler_020 g I", $gpioIN);	
+	$gpioIN = $GPIO->getIn();
 
 	transfer_javascript($loginstatus, $adminstatus, $temperature[0], $temperature[1], $runstop, $gpioOUT[0], $gpioOUT[1], $gpioOUT[2], $gpioOUT[3], $gpioOUT[4], $gpioIN[0], $gpioIN[1], $gpioIN[2]);
 
 }
 
 if (($loginstatus == false) && ($getData == $get)){
-	exec("flock /tmp/PT1000handlerlock /usr/lib/cgi-bin/PT1000handler_020 g 0", $temperature);
-	exec("flock /tmp/PT1000handlerlock /usr/lib/cgi-bin/PT1000handler_020 g 1", $temperature);
+	$PT1000ex1 = new PT1000();
+	$GPIO = new GPIO();
 
-//get GPIO out status	
-	exec(" /usr/lib/cgi-bin/GPIOhandler_020 g O", $gpioOUT);
+	$temperature = $PT1000ex1->getPT1000(0,1);
+	$temperature = $PT1000ex1->getPT1000(1,1);
+
+//get GPIO out status
+	unset($gpioOUT);
+	$gpioOUT = $GPIO->getOut();
 
 	transfer_javascript($loginstatus, $adminstatus, $temperature[0], $temperature[1],'null','null','null', $gpioOUT[2], $gpioOUT[3],'null','null','null','null');
 }
 //from all accessible Buttons => Light for Pool, etc.
 if (($getData == $set) && ($setOutNumber == 2 || $setOutNumber == 3)){
-	exec(" /usr/lib/cgi-bin/GPIOhandler_020 s $setOutNumber $setOutValue", $gpioOUT);
+	$GPIO = new GPIO();
+	unset($gpioOUT);
+	$gpioOUT = $GPIO->setOutsingle($setOutNumber,$setOutValue);
 }
 
 function transfer_javascript($loginstatus, $adminstatus, $temperature0, $temperature1, $runstop, $gpioOUT0, $gpioOUT1, $gpioOUT2, $gpioOUT3, $gpioOUT4, $gpioIN0, $gpioIN1, $gpioIN2)
