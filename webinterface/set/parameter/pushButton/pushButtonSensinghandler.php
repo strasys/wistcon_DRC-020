@@ -46,7 +46,7 @@ if ($setgetpushButtonSensingProcessStatus == $get)
  * The following part of the get attribute was set to get the set status 
  * of the push button sensing inputs.
 */
-	$statusFile = fopen("/tmp/pushButtonSensingDigiInStatus.txt","r");
+	$statusFile = fopen("/usr/lib/cgi-bin/pushButtonSensingDigiInStatus.txt","r");
 	if ($statusFile == false)
 	{
 		$errorMsg = "Could not read \"pushButtonSensingDigiInStatus.txt\"! 
@@ -54,7 +54,7 @@ if ($setgetpushButtonSensingProcessStatus == $get)
 	}
 	elseif ($statusFile)
 	{
-		for ($i=0;$i<4;$i++){
+		for ($i=0;$i<12;$i++){
 		$line = fgets($statusFile, 30);
 		$DigiInStatus = explode(":",$line);
 		$DigiIN[$i] = trim($DigiInStatus[2]);
@@ -91,16 +91,21 @@ if ($setgetpushButtonSensingProcessStatus == $set)
 		rewind($statusFile);
 		fwrite($statusFile, $statusWord, 5);
 		fclose($statusFile);
-		
+	
 		if ($statusWord == "run")
 		{
-			$cmd = " /usr/lib/cgi-bin/pushButtonSensing $sensingChannels[0] $sensingChannels[2] $sensingChannels[4] $sensingChannels[6]"; 
+			$sensing = explode(",",$sensingChannels,12);
+			$cmd = " /usr/lib/cgi-bin/pushButtonSensing $sensing[0] $sensing[1] $sensing[2] $sensing[3] $sensing[4] $sensing[5] $sensing[6] $sensing[7] $sensing[8] $sensing[9] $sensing[10] $sensing[11]"; 
 			exec($cmd . " > /dev/null &");
 		}
 	}
 	transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg);
-}
 
+		$xml=simplexml_load_file("/var/www/VDF.xml") or die("Error: Cannot create object");
+		$xml->OperationModeDevice[0]->pushButtonSensing = $statusWord;
+		$xml->asXML("/var/www/VDF.xml");
+ 
+}
 
 function transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg, $DigiIN)
 {
@@ -115,7 +120,7 @@ function transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg, $D
  * 1 = Signal on Input low.
  * 0 = Signal on Input high.
 */ 
-	for ($i=0;$i<4;$i++)
+	for ($i=0;$i<12;$i++)
 	{
 	$arr["IN$i"] = $DigiIN[$i];
 	}

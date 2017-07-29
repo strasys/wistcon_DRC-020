@@ -52,7 +52,7 @@ function getStatusLogin(callback1){
  * If the sensing function is running runstop = 1 else 0.
  * With errorMsg the PHP function transfers possible error messages.
  */
-function setgetStatuspushButtonSensingProcess(setget,setrunstopStatus,inputActivationStatus, callback2){
+function setgetStatuspushButtonSensingProcess(setget,setrunstopStatus, inputActivationStatus, callback2){	
 		setgetServer("post","pushButtonSensinghandler.php",function()
 			{
 				if (xhttp.readyState==4 && xhttp.status==200)
@@ -64,7 +64,15 @@ function setgetStatuspushButtonSensingProcess(setget,setrunstopStatus,inputActiv
 				                                  (setgetpushButtonSensingProcessStatus.IN0),
 				                                  (setgetpushButtonSensingProcessStatus.IN1),
 				                                  (setgetpushButtonSensingProcessStatus.IN2),
-				                                  (setgetpushButtonSensingProcessStatus.IN3)
+								  (setgetpushButtonSensingProcessStatus.IN3),
+								 (setgetpushButtonSensingProcessStatus.IN4),
+								 (setgetpushButtonSensingProcessStatus.IN5),
+								 (setgetpushButtonSensingProcessStatus.IN6),
+								 (setgetpushButtonSensingProcessStatus.IN7),
+								 (setgetpushButtonSensingProcessStatus.IN8),
+								 (setgetpushButtonSensingProcessStatus.IN9),
+								 (setgetpushButtonSensingProcessStatus.IN10),
+								 (setgetpushButtonSensingProcessStatus.IN11)
 				                                  ];
 				
 					if (callback2){
@@ -132,7 +140,7 @@ function getNamingXMLData(callback3){
 function setgetpushButtonSensingActivation(setget, callback4){
 	inputActivationStatus = new Array();
 	if (setget == "set"){
-		for (i=0;i<4;i++){
+		for (i=0;i<12;i++){
 			if (document.getElementById("inputcheckboxpushButtonSensing"+i).checked){
 			inputActivationStatus[i] = 1;
 			}
@@ -146,7 +154,7 @@ function setgetpushButtonSensingActivation(setget, callback4){
 		
 	}
 	if(setget == "get"){
-		for (i=0;i<4;i++){
+		for (i=0;i<12;i++){
 			$("#inputcheckboxpushButtonSensing"+i).removeAttr("disabled", "disabled");
 			$("#checkboxpushButtonSensing"+i).removeClass("disabled");
 		}	
@@ -166,7 +174,9 @@ function ButtonpushButtonSensingAction(ButtonNumber){
 		if(StatuspushButtonSensingProcess[0] == 1){
 			setgetpushButtonSensingActivation("get",function(){
 				setgetStatuspushButtonSensingProcess("s","0","", function(){
-					setButtonColorBadge(0);
+					refreshStatus(function(){
+						setButtonColorBadge(0);				
+					});
 				});
 			});
 			
@@ -174,7 +184,9 @@ function ButtonpushButtonSensingAction(ButtonNumber){
 		if(StatuspushButtonSensingProcess[0] == 0){
 			setgetpushButtonSensingActivation("set", function(){
 				setgetStatuspushButtonSensingProcess("s","1", inputActivationStatus, function(){
-					setButtonColorBadge(0);
+					refreshStatus(function(){
+						setButtonColorBadge(0);
+					});
 				});
 			});
 		}
@@ -187,7 +199,7 @@ function ButtonpushButtonSensingAction(ButtonNumber){
  * This function 
  */
 function updatecheckboxSensingStatus(callback5){
-	for(i=0;i<4;i++){
+	for(i=0;i<12;i++){
 		var x = document.getElementById("inputcheckboxpushButtonSensing"+i);
 		if ((StatuspushButtonSensingProcess[i+2] == 0) || (StatuspushButtonSensingProcess[i+2] == 1)){
 			x.checked = true;
@@ -219,7 +231,7 @@ function updatecheckboxSensingStatus(callback5){
  */
 function StatusinformationPushButtonSensing(callback6){
 		//Function must be optimized to replace information in existing Elements once created.
-	for (i=0;i<4;i++){
+	for (i=0;i<12;i++){
 		var element = document.getElementById("StatusinformationPushButtonSensing");
 		var tagInfo = element.getElementsByTagName("p");
 		var node = document.createTextNode("Eingang "+i+" : "+StatuspushButtonSensingProcess[i+2]);
@@ -279,14 +291,18 @@ window.onload=startatLoad();
   * Refresh status of pushButtonSensing information's.
   */
 
-/* function refreshStatus(){
+function refreshStatus(callback){
 	 	setgetStatuspushButtonSensingProcess("g","","", function(){
 			setButtonColorBadge(0, function(){
 				updatecheckboxSensingStatus(function(){
-					StatusinformationPushButtonSensing();
+					StatusinformationPushButtonSensing(function(){
+						if (callback){
+							callback();
+						}
+					});
 				});
 			});
 		});
-		setTimeout(function(){refreshStatus()}, 5000);
-		}
-*/
+	//	setTimeout(function(){refreshStatus()}, 5000);
+}
+

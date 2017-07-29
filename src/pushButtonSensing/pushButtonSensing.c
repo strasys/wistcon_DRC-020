@@ -11,7 +11,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <fcntl.h>
 #include "GPIO.h"
+#include "accessorg.h"
 
 int getboolRunStop(char *charRunStop){
 	int boolRunStop;
@@ -85,27 +87,64 @@ int getRunStopStatus() {
 	}
 	return RunStopStatus;
 }
+//function to set file owner to www-data
+void setfileown(char *DIR, char *uid_Name, char *gid_Name){
+		char username[255];
+		char groupname[255];
+		long int uidresult[] = {0};
+		long int gidresult[] = {0};
+		long int uidowner[] = {0};
+		long int gidowner[] = {0};
+		long int uidresultgroup[] = {0};
+		long int gidresultgroup[] = {0};
+		long int fileprotection[] = {0};
+		int filedesc;
+	// Check if file has the defined uid (user ID) and gid (group ID)!
+	filedesc = open(DIR, O_RDWR);
+
+	getinfofile(&filedesc, uidowner, gidowner, fileprotection);
+
+	//	printf("getinfofile call: \n uidowner : %li\n gidowner : %li\n fileprotection : %lo\n", uidowner[0], gidowner[0], fileprotection[0]);
+	strcpy(username, uid_Name);
+	getuidbyname(username, uidresult, gidresult);
+	strcpy(groupname, gid_Name);
+	getuidbyname(groupname, uidresultgroup, gidresultgroup);
+
+	//	printf("Result of function call:\n uid : %li\n gid : %li\n", uidresult[0], gidresult[0]);
+
+
+		if ((fchown(filedesc, uidresult[0], gidresult[0])) != 0){
+			fprintf(stderr, "%s\n", strerror(errno));
+		}
+
+	close(filedesc);
+}
 
 void writeDigiInStatus(char *DigiInStatus) {
 	FILE *f = NULL;
 	char DIR_writeDigiInStatus[255] = {};
-	char InStatus[7] = {};
+	char InStatus[255] = {};
 	char fopenModus[2] = {};
-	char buffer1[4] = {};
+	char buffer1[255] = {};
 	int i = 0;
 
-	sprintf(DIR_writeDigiInStatus, "/tmp/pushButtonSensingDigiInStatus.txt");
+	sprintf(DIR_writeDigiInStatus, "/usr/lib/cgi-bin/pushButtonSensingDigiInStatus.txt");
 
 	if (access(DIR_writeDigiInStatus, (R_OK | W_OK)) != -1){
 		sprintf(fopenModus, "r+");
 	} else {
 		sprintf(fopenModus, "w");
+		char uid[255] = {};
+		char gid[255] = {};
+		sprintf(uid, "root");
+		sprintf(gid, "www-data");
+		setfileown(DIR_writeDigiInStatus, uid, gid);
 	}
 
 	sprintf(buffer1,"%s",DigiInStatus);
 
 	f = fopen(DIR_writeDigiInStatus, fopenModus);
-	for (i=0; i<4; i++){
+	for (i=0; i<12; i++){
 		sprintf(InStatus,"IN:%i:%c\n",i,buffer1[i]);
 		fprintf(f,"%s",InStatus);
 	}
@@ -114,12 +153,12 @@ void writeDigiInStatus(char *DigiInStatus) {
 }
 
 int main(int argc, char *argv[], char *env[]){
-	char SensingInput[4] = {};
-	char InputStatusInit[4] = {};
-	char InputStatusNew[4] = {'1','1','1','1'};
-	char InputStatusOld[4]={'1','1','1','1'};
-	char InputStatus[4]={'1','1','1','1'};
-	int i = 0, runstop = 1, InNumber, flagWriteDigiInStatus=0, sensingCycleTime;
+	char SensingInput[14] = {};
+	char InputStatusInit[14] = {};
+	char InputStatusNew[14] = {'1','1','1','1','1','1','1','1','1','1','1','1'};
+	char InputStatusOld[14]={'1','1','1','1','1','1','1','1','1','1','1','1'};
+	char InputStatus[14]={'1','1','1','1','1','1','1','1','1','1','1','1'};
+	int i = 0, runstop = 1, flagWriteDigiInStatus=0, sensingCycleTime;
 
 /*
  * Get arguments what Inputs should be considered
@@ -127,28 +166,26 @@ int main(int argc, char *argv[], char *env[]){
  * 0 = sensing no
  * 1 = sensing yes
  */
-	if ((argv[1] && argv[2] && argv[3] && argv[4])!=0){
-		for (i=1;i<5;i++)
+	// Check arguments
+
+	for (i=1;i<13;i++){
+		printf("check argument %i: %c\n",i,argv[i][0]);
+
+		if ((argv[i][0] != '0') && (argv[i][0] != '1')){
+			fprintf(stderr, "Wrong argument value: %s\n", strerror( errno ));
+			return EXIT_FAILURE;
+		}
+
+	}
+
+		for (i=1;i<13;i++)
 		{
 			sscanf(argv[i],"%c",&SensingInput[i-1]);
-			
-			if (((SensingInput[i-1]) != '0')&&(SensingInput[i-1] != '1'))
-			{
-				fprintf(stderr, "Wrong argument value: %s\n", strerror( errno ));
-				return EXIT_FAILURE;
-			}
 		}
-	}
-	else
-	{
-		fprintf(stderr, "To view arguments: %s\n", strerror( errno ));
-		return EXIT_FAILURE;
-	}
-	
 
-	if (argv[5]!=0)
+	if (argv[13]!=0)
 	{
-		sensingCycleTime = atoi(argv[5])*1000; //sensing in xx ms
+		sensingCycleTime = atoi(argv[13])*1000; //sensing in xx ms
 	}
 	else
 	{
@@ -159,7 +196,7 @@ int main(int argc, char *argv[], char *env[]){
 	 * Write init status to file.
 	 * This enables other interface processes like php to read the set sensing inputs.
 	 */
-		for (i=0;i<sizeof(InputStatusInit);i++){
+		for (i=0;i<12;i++){
 			if (SensingInput[i] == '0'){
 				InputStatusInit[i] = 'N';
 			}
@@ -178,13 +215,12 @@ int main(int argc, char *argv[], char *env[]){
 		 * 1 = low signal / 0 = high signal on input
 		 * N = Is the marker that this channel is not considered for sensing.
 		 */
-		for (i=0;i<sizeof(SensingInput);i++)
+		for (i=0;i<12;i++)
 		{
 			if (SensingInput[i] == '1')
 			{
-				InNumber = i + 8; //8 is the offset to read only IN channels.
 
-				InputStatusNew[i] =	gpio_get_value(IN_OUT[InNumber][0])+'0'; //The 0 is necessary to convert int to char.
+				InputStatusNew[i] =	gpio_get_value(IN_OUT_2[i][0])+'0'; //The 0 is necessary to convert int to char.
 
 			}
 			else
