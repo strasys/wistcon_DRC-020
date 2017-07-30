@@ -33,6 +33,15 @@ else
 		echo "extracting ..."
 		tar -xvf wistcon-DRC-020.tar -C /tmp/wistcon-DRC-020/ 
 		wait
+		echo "generate folder /var/secure/"
+		mkdir /var/secure/
+		wait
+		echo "Copy password file user.txt to /var/secure/"
+		cp /tmp/wistcon-DRC-020/webinterface/user.txt /var/secure/
+		wait
+		echo "remove user.txt from /tmp/wistcon-DRC-020/webinterface/"
+		rm /tmp/wistcon-DRC-020/webinterface/user.txt
+		wait
 		echo "Copy webcontent to /var/www"
 		cp -rT /tmp/wistcon-DRC-020/webinterface/ /var/www/
 		wait
@@ -44,12 +53,18 @@ else
 		wait
 		echo "Copy init_wistcon-php.service to /lib/systemd/system"
 		cp init_wistcon-php.service /lib/systemd/system/
-		echo		
+		wait		
 		echo "Copy init_wistcon-020.service to /lib/systemd/system"
 		cp init_wistcon-020.service /lib/systemd/system/
 		wait
+		echo "clean init_wistcon-020.service from /usr/lib/cgi-bin/"
+		rm init_wistcon-020.service
+		wait
 		echo "Copy wistcon-DRC020-00A0.dtbo to /lib/firmware/"
 		cp wistcon-DRC020-00A0.dtbo /lib/firmware/
+		wait
+		echo "Clean wistcon-DRC020-00A0.dtbo from /usr/lib/cgi-bin/"
+		rm wistcon-DRC020-00A0.dtbo
 		wait
 		echo "move to /lib/systemd/system/"
 		cd /lib/systemd/system/

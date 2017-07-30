@@ -64,7 +64,7 @@ else
 		cp wistcon-DRC020-00A0.dtbo /lib/firmware/
 		wait
 		echo "Clean wistcon-DRC020-00A0.dtbo from /usr/lib/cgi-bin/"
-		rm wistcon-DRC020-00A0.dtbo
+		rm init_wistcon-020.service
 		wait
 		echo "move to /lib/systemd/system/"
 		cd /lib/systemd/system/

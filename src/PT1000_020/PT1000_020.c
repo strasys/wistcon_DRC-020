@@ -147,6 +147,9 @@ case 'g':
 
 	}
 	break;
+case 'i':
+	initADS1015(72);
+	break;
 default:
 	printf("Wrong arguments!\n"
 			"Try PT1000handler h\n");
