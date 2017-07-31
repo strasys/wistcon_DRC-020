@@ -112,7 +112,7 @@ function submit_very_code(){
 			$("#veriCode").val('');
 			$("#reg_owner_answer_header").addClass("text-sucess");
 			$("#reg_owner_answer_header").html("<strong>Erfolgreich Registriert</strong>");
-			$("#reg_owner_answer_p").html("Sie können sich nun über <a href=\"http://www.wistcon.de\">www.wistcon.de</a> anmelden	und erweitere Funktionen für ihr Produkt nutzen.<br>Eine wesentliche Funktion ist der Zugriff auf Ihr Produkt von außerhalb Ihres Heimnetzwerks.<br><strong>Achtung:<strong> Hierfür müssen Sie Ihre DNS Funktion auf dem Gerät aktivieren.");
+			$("#reg_owner_answer_p").html("Sie können sich nun über <a href=\"http://www.wistcon.de\">www.wistcon.de</a> anmelden	und erweiterte Funktionen für ihr Produkt nutzen.<br>Eine wesentliche Funktion ist der Zugriff auf Ihr Produkt von außerhalb Ihres Heimnetzwerks.<br><strong>Achtung:<strong> Hierfür müssen Sie Ihre DNS Funktion auf dem Gerät aktivieren.");
 			$("#reg_owner_email_p").html("Registrierungs e-mail: <strong>"+email+"</strong><br>");
 			$("#reg_owner_username_p").html("Folgender Benutzername wurde Ihnen zugewiesen.<br>Benutzername: <strong>"+username+"</strong>");
 		} else if ((ownerRegisterStatus_very[0] == -1) && (ownerRegisterStatus_very[1] == 1))
@@ -516,9 +516,18 @@ function checkRegistrationStatus(callback){
 	);
 }
 
+//show and hide
+function showandhide(callback){
+	$("#idDeviceOwnerRegistration").hide();	
+
+	if (callback){
+		callback();
+	}
+}
 
 // load functions ad webpage opening
 function startatLoad(){
+showandhide(function(){
 	loadNavbar(function(){
 		checkRegistrationStatus(function(){ 
 			if(ownerRegisterStatus_check[0] != null){
@@ -528,20 +537,24 @@ function startatLoad(){
 				$("#reg_owner_email_p").html("Benutzer Name: <strong>"+ownerRegisterStatus_check[7]+"</strong><br>");
 				$("#reg_owner_username_p").html("Registrierte e-mail Adresse: <strong>"+ownerRegisterStatus_check[3]+"</strong><br>");
 				$("#reg_owner_answer_positiv").show();
+				$("#idDeviceOwnerRegistration").hide();
 			} else if ((ownerRegisterStatus_check[0] == 1) && (ownerRegisterStatus_check[1] == -1)){
 				$("#reg_owner_answer_header").html("<strong>Registrierungs - Verifizierung ausstehend!</strong>");
 				$("#reg_owner_answer_positiv").show();
+				$("#idDeviceOwnerRegistration").hide();
 			}  
 			}else	{
 				emptyinputfields(function(){
 					$("#reg_form_owner").show();
 					$("#SubmitProductReg").show();
+					$("#idDeviceOwnerRegistration").show();
 					setSelectMenuesValues(function(){
 					});
 				});
 			}
 		});
 	});
+});
 }
 window.onload=startatLoad();
 

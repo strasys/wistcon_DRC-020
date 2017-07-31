@@ -21,7 +21,7 @@
   <body>
 <!-- Fixed Navbar -->
 	<div id="mainNavbar"></div>	
-  	<div class="container desk">
+  	<div id="idDeviceOwnerRegistration" class="container desk">
 		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3><b> Produktregistrierung Eigentümer</b></h3>
@@ -137,13 +137,12 @@
   		</div>
 	</div>	
 <!-- Processing Modal -->
-<div id="waitProcessIndication">
+<div id="waitProcessIndication" class="positionontop">
 	<!-- Begin Modal -->
-	<div class="modal-dialog">
+	<div class="modal-dialog modalpos">
 		<div class="modal-content">
-			<div class="modal-body">
-				<i class="fa fa-refresh fa-spin" style="font-size:24px"></i>
-				<p>Loading ... </p>
+			<div class="modal-body">				
+				<div class="loader"></div>
 			</div>
 		</div>
 	</div>
