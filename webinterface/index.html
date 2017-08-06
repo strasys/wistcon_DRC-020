@@ -114,25 +114,38 @@
 		</div>
 	</div>
 	<div class="panel" id="panelAdditionalFunctions">
-			<div class="row" style="padding-bottom:50px;">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<h3>
-					<button class="btn btn-default" type="button" id="buttonOut0" onclick="setOutstatus(0)" style = "width:100%;">
- 	 					<h4> 
- 	 					<strong id="buttonOutText0">Bedienfunktionen</strong>
- 	 			 		 </h4>
-					</button>
-					</h3>
-				</div>
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<div class="databox info">	
-						<h4>
-						<span class="badge alert-info" id="badgeOperationMode" style = "font-size:125%; min-width:80px;"></span>
-						<strong id="labelOperationMode" style = "font-size:125%;">Betriebsart</strong>	
-						</h4>
-					</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h4>Sonderfunktionen</h4>
+			</div>	
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h3>
+				<button class="btn btn-default" type="button" id="buttonOut0" onclick="setOutstatus(0)" style = "width:100%;">
+ 	 				<h4> 
+ 	 				<strong id="buttonOutText0">Bedienfunktionen</strong>
+ 	 			 	 </h4>
+				</button>
+				</h3>
+			</div>
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="databox info">	
+					<h4>
+					<span class="badge alert-info" id="badgeOperationMode" style = "font-size:125%; min-width:80px;"></span>
+					<strong id="labelOperationMode" style = "font-size:125%;">Betriebsart</strong>	
+					</h4>
 				</div>
 			</div>
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div id="ButtonRinseBack" class="databox switch-off">
+					<button class="btn btn-default" type="button" style="width:100%;" data-toggle="modal" data-target="#RinseBackmodal">
+ 	 				<h4> 
+ 	 					<strong id="ButtonRinseBacktext"></strong>
+	 	 				<span class="badge switch-off" id="ButtonRinseBackbadge"></span>
+ 	 				</h4>
+					</button>
+				</div>
+			</div>	
+		</div>
 	</div>
 	<div id="panelPager" style="margin-top:50px;">
 		<ul class="pager">
@@ -141,10 +154,43 @@
 		</ul>
 	</div>
 </div>
+
+<!-- Processing Modal -->
+	<!-- Begin Modal -->
+	<div id="RinseBackmodal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	   <div class="modal-header">
+	      <button id="dismiss-button-customer-login" type="button" class="close" data-dismiss="modal">
+	      		<span class="glyphicon glyphicon-remove"></span>
+	      </button>
+	      <h1 class="modal-title">Rückspülen</h1>
+      </div>
+	      <div class="modal-body">
+			<h3>Ablaufbeschreibung Rückspülen</h3>
+			<p>1. Pumpe aus schalten!</p>
+			<p>2. Wahlhebel - Mischer auf Rückspülen Stellen</p>
+			<p>3. Pumpe einschalten und ca. 3 Minuten laufen lassen</p>
+			<p>4. Pumpe aus schalten!</p>
+			<p>5. Wahlhebel - Mischer auf Nachspülen stellen.</p>
+		        <P>6. Pumpe einschalten und ca. 3 Minuten laufen lassen.</p>	
+			<p>7. Pumpe ausschalten!</p>
+			<p>8. Wahlhebel zurück auf Filterbetrieb stellen!</p>
+			<h4>Rückspül - Menü durch Kreuztaste verlassen</p>
+			</div>
+			<div class="modal-footer">
+				Nach dem Beenden des Rückspül-Durchlaufs. Fenster schließen.
+			</div>
+		</div>
+	</div>
+	</div>
+
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="/jQuery/3.2.1/jquery.min.js"></script> 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/"></script>
   	<script src="/index.js?ver=3"></script>
   </body>
 </html>

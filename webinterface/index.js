@@ -89,11 +89,13 @@ function getXMLData(callback4){
 			var digiIN = getXMLData.getElementsByTagName("GPIOIN");
 			var digiOUT = getXMLData.getElementsByTagName("GPIOOUT");
 			var PT1000 = getXMLData.getElementsByTagName("PT1000");
+			var ButtonText = getXMLData.getElementsByTagName("ButtonText");
 
 			document.getElementById("labelTempPool").innerHTML = PT1000[0].getElementsByTagName("PT1000Name1")[0].childNodes[0].nodeValue;
 			document.getElementById("labelTempOutside").innerHTML = PT1000[1].getElementsByTagName("PT1000Name1")[0].childNodes[0].nodeValue;
 			document.getElementById("buttonOutText2").innerHTML = digiOUT[2].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
 			document.getElementById("buttonOutText3").innerHTML = digiOUT[3].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
+			document.getElementById("ButtonRinseBacktext").innerHTML = ButtonText[0].getElementsByTagName("RinseBackButton")[0].childNodes[0].nodeValue;
 			document.getElementById("labelStatusPump").innerHTML = digiOUT[1].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
 			document.getElementById("labelStatusWaterValve").innerHTML = digiOUT[4].getElementsByTagName("OutputName")[0].childNodes[0].nodeValue;
 			document.getElementById("labelStatusNiveauSensor").innerHTML = digiIN[0].getElementsByTagName("InputName")[0].childNodes[0].nodeValue;
@@ -328,5 +330,11 @@ $("#panelPager a:last").on('click', function(){
 
 $("#panelPager a:first").on('click', function(){
 	PanelView(positionPanelCurrent - 1);
+});
+
+//Rinse Back Function
+
+$("#ButtonRinseBack button").on('click', function(){
+	
 });
 

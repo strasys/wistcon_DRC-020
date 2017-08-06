@@ -169,6 +169,9 @@
 <AOUT>
 	<AOUTName3>AOUT 4</AOUTName3>
 </AOUT>
+<ButtonText>
+	<RinseBackButton>Rückspülen</RinseBackButton>
+</ButtonText>
 
 <CleaningInterval>
 	<Start>00:00</Start>
@@ -207,12 +210,17 @@
 	<Overtraveltime>20</Overtraveltime>
 	<SensorONTime>5</SensorONTime>
 </LevelControl>
+<RinseBackSetting>
+	<timebetweenRinseBack>21</timebetweenRinseBack>
+	<RinseBackTime>5</RinseBackTime>
+	<RinseBackClearing>3</RinseBackClearing>
+</RinseBackSetting>
 <OperationModeDevice>
 	<AutomaticHand>stop</AutomaticHand>
-	<DNSService>stop</DNSService>
+	<DNSService>run</DNSService>
 </OperationModeDevice>
 <Owner>
-	<email/>
-	<userName/>
+	<email>johannes.strasser@wistcon.at</email>
+	<userName>johannes.strasser</userName>
 </Owner>
 </wistcon-pool>
