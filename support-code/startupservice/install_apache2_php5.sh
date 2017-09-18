@@ -27,11 +27,26 @@ echo "disable bonescript-autorun.service"
 systemctl disable bonescript-autorun.service
 echo "disable avahi-daemon.service"
 systemctl disable avahi-daemon.service
+echo "disable gateone.service"
+systemctl disable gateone.service
+echo "disable gdm.service"
+systemctl disable gdm.service
+echo "disable mpd.service"
+systemctl disable mpd.service
 echo "Installation of apache2, php5 and libapache2-mod-php5 completed"
 echo "restart apache2"
 service apache2 restart
 wait
-read -p "Would you like to activate SSL encryption? (y/n)? " RESP
+echo "The network interface file needs to contain following:\n
+The rest needs tobe uncommented\n\n
+# The loopback network interface\n
+auto lo\n
+iface lo inet loopback\n
+"
+read -p "Change the /etc/network/interfaces file and than press enter to continue."
+apt-get install network-manager
+wait
+-p "Would you like to activate SSL encryption? (y/n)? " RESP
 if [ "$RESP" = "y" ]; then
 echo "Generate private key"
 openssl genrsa -out /etc/ssl/private/apache.key 2048 
@@ -79,7 +94,6 @@ wait
 else
 exit 1
 fi
-
 read -p "Would you like to reboot (strongly recommended)? (y/n)? " RESP
 if [ "$RESP" = "y" ]; then
 reboot
