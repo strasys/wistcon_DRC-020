@@ -60,7 +60,7 @@ class Solar
 			for($i=0;$i<3;$i++)
 			{
 				$line = fgets($TempControlFile,200);
-				echo $line."<br>";
+				//echo $line."<br>";
 				$line = trim($line);
 				list($var,$varval) = explode(":",$line);
 				$artemp[$x] = $var;

@@ -72,7 +72,7 @@ if (($setgetComposerProcessStatus == $set) && ($adminstatus == true))
 				$statusWord = "run";
 				$runstop = 1;
 				$cmd = "php /var/www/composer_prog/composer.php";
-				exec($cmd . " > /dev/null &");
+				exec($cmd  . " > /dev/null &");
 				break;
 		}
 
@@ -81,9 +81,9 @@ if (($setgetComposerProcessStatus == $set) && ($adminstatus == true))
 		fwrite($statusFile, $statusWord, 5);
 		fclose($statusFile);
 
-		$xml=simplexml_load_file("/VDF.xml") or die("Error: Cannot create object");
+		$xml=simplexml_load_file("/var/www/VDF.xml") or die("Error: Cannot create object");
 		$xml->OperationModeDevice[0]->AutomaticHand = $statusWord;
-		$xml->asXML("/VDF.xml");
+		$xml->asXML("/var/www/VDF.xml");
 
 	}
 	transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg);

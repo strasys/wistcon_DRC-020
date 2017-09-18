@@ -16,7 +16,7 @@ class GPIO
 	 */
 	function setOut($out)
 	{
-		for ($i = 0; $i<12; $i++)
+		for ($i = 0; $i<11; $i++)
 		{
 			
 			exec("flock /tmp/GPIOlock /usr/lib/cgi-bin/GPIOhandler_020 s $i $out[$i]");

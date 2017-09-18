@@ -9,7 +9,7 @@
 class AIN
 {
 	/*
-	 * $num = AIN channel number (= 1 - 4)
+	 * $num = AIN channel number (= 0 - 3)
 	 * $hwext = position of the interface module (1 - 4)
 	 * Info: If not clear run class EEPROM
 	 */

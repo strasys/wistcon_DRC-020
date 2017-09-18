@@ -46,7 +46,7 @@ $pushButtonSensingService = $xml->OperationModeDevice[0]->pushButtonSensing;
 			case 'run':
 				$statusWord = "run";
 				writestatus($statusWord, $statusFile);
-				$cmd = "php /var/www/DNSservicegetIP.php";
+				$cmd = "php /var/www/set/parameter/DNS_Service/DNSservicegetIP.php";
 				exec($cmd . " > /dev/null &");
 				break;
 		}	
@@ -72,14 +72,14 @@ $pushButtonSensingService = $xml->OperationModeDevice[0]->pushButtonSensing;
 			case 'run':
 				$statusWord = "run";
 				writestatus($statusWord, $statusFile);
-				$cmd = "php /var/www/composer.php";
+				$cmd = "php /var/www/composer_prog/composer.php";
 				exec($cmd . " > /dev/null &");
 				break;
 		}
 
 	}
 
-//Set status fo pushButtonSensing Function
+//Set status for pushButtonSensing Function
 	unset($statusFile, $statusWord);
 	$statusFile = fopen("/tmp/pushButtonSensingRunStop.txt", "w");
 	if ($statusFile == false)

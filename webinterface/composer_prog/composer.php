@@ -5,16 +5,16 @@
 //ini_set('display_startup_errors', 1);
 //
 
-include_once "./hw_casses/GPIO.inc.php";
-include_once "./hw_casses/PT1000.inc.php";
-include_once "./hw_casses/RTC.inc.php";
-include_once "./pool_classes/composerloopcontrol.inc.php";
-include_once "./pool_classes/PoolCleaninterval.inc.php";
-include_once "./pool_classes/PoolSolar.inc.php";
-include_once "./pool_classes/PoolNiveau.inc.php";
+include_once "/var/www/hw_classes/GPIO.inc.php";
+include_once "/var/www/hw_classes/PT1000.inc.php";
+include_once "/var/www/hw_classes/RTC.inc.php";
+include_once "/var/www/service_classes/composerService.inc.php";
+include_once "/var/www/pool_classes/PoolCleaninterval.inc.php";
+include_once "/var/www/pool_classes/PoolSolar.inc.php";
+include_once "/var/www/pool_classes/PoolNiveau.inc.php";
 
 $DIGI = new GPIO();
-$loopstatuscontrol = new composerloopcontrol();
+$loopstatuscontrol = new composerService();
 $Cleaning = new CleaningInterval();
 $Solar = new Solar();
 $Niveau = new Niveau();
@@ -42,12 +42,12 @@ $OUT = array (	0 => 0,
 		7 => 0
 );
 
-$DIGI->setOut($OUT);
+//$DIGI->setOut($OUT);
 
 /*
  * Set RUN LED to true
  */
-$DIGI->setOutsingle(24,1);
+$DIGI->setOutsingle(12,1);
 
 while ($loopstatus){
 	/*
@@ -57,7 +57,7 @@ while ($loopstatus){
 	 * in a defined and controlled mode.
 	 * => run = true/ stop = false
 	 */
-	$loopstatus = $loopstatuscontrol->runstop();
+	$loopstatus = $loopstatuscontrol->getcomposerStatus();
 
 //	$loopstatus = true;
 	//TODO: Add log file function.
@@ -170,9 +170,9 @@ while ($loopstatus){
 				6 => 0,
 				7 => 0
 		);
-		$DIGI->setOut($OUT);
+	//	$DIGI->setOut($OUT);
 
-		$DIGI->setOutsingle(24,0);
+		$DIGI->setOutsingle(12,0);
 	}
 
 }

@@ -66,7 +66,7 @@ if (($setgetDNSserviceStatus == $set) && ($adminstatus == true))
 			case 1:
 				$statusWord = "run";
 				$runstop = 1;
-				$cmd = "php /var/www/DNSservicegetIP.php";
+				$cmd = "php /var/www/set/parameter/DNS_Service/DNSservicegetIP.php";
 				exec($cmd . " > /dev/null &");
 				break;
 		}
@@ -76,9 +76,9 @@ if (($setgetDNSserviceStatus == $set) && ($adminstatus == true))
 		fwrite($statusFile, $statusWord, 5);
 		fclose($statusFile);
 
-		$xml=simplexml_load_file("/VDF.xml") or die("Error: Cannot create object");
+		$xml=simplexml_load_file("/var/www/VDF.xml") or die("Error: Cannot create object");
 		$xml->OperationModeDevice[0]->DNSService = $statusWord;
-		$xml->asXML("/VDF.xml");
+		$xml->asXML("/var/www/VDF.xml");
 
 	}
 	transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg);

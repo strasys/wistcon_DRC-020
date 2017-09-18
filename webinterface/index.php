@@ -10,6 +10,7 @@ session_start();
 include_once ('/var/www/authentification.inc.php');
 include_once ('/var/www/hw_classes/PT1000.inc.php');
 include_once ('/var/www/hw_classes/GPIO.inc.php');
+include_once ('/var/www/hw_classes/AIN.inc.php');
 
 unset($getLoginStatus, $getData);
 $getLoginStatus = $_POST['getLoginStatus'];
@@ -24,9 +25,10 @@ $set = "s";
 if (($loginstatus == true) && ($getData == $get)){
 	$PT1000ex1 = new PT1000();
 	$GPIO = new GPIO();
+	$AIN = new AIN();
 
-	$temperature[] = $PT1000ex1->getPT1000(0,1);
-	$temperature[] = $PT1000ex1->getPT1000(1,1);
+	$temperature[] = $PT1000ex1->getPT1000(0,2);
+	$temperature[] = $PT1000ex1->getPT1000(1,2);
 
 //get Composer status
 	$statusFile = fopen("/tmp/composerstatus.txt", "r");
@@ -56,8 +58,13 @@ if (($loginstatus == true) && ($getData == $get)){
 	$gpioOUT = $GPIO->getOut();
 //get GPIO in status
 	$gpioIN = $GPIO->getIn();
+//get Analog in status
+	$AIN0val = $AIN->getAIN(0,1);
+	$AIN0 = round ((($AIN0val / 4096) * 100),1);
+	$AIN1val = $AIN->getAIN(1,1);
+	$AIN1 = round(((50 * $AIN1val) / 4096),1);
 
-	transfer_javascript($loginstatus, $adminstatus, $temperature[0], $temperature[1], $runstop, $gpioOUT[0], $gpioOUT[1], $gpioOUT[2], $gpioOUT[3], $gpioOUT[4], $gpioIN[0], $gpioIN[1], $gpioIN[2]);
+	transfer_javascript($loginstatus, $adminstatus, $temperature[0], $temperature[1], $runstop, $gpioOUT[0], $gpioOUT[1], $gpioOUT[2], $gpioOUT[3], $gpioOUT[4], $gpioIN[0], $gpioIN[1], $gpioIN[2], $AIN0, $AIN1);
 
 }
 
@@ -65,8 +72,8 @@ if (($loginstatus == false) && ($getData == $get)){
 	$PT1000ex1 = new PT1000();
 	$GPIO = new GPIO();
 
-	$temperature[] = $PT1000ex1->getPT1000(0,1);
-	$temperature[] = $PT1000ex1->getPT1000(1,1);
+	$temperature[] = $PT1000ex1->getPT1000(0,2);
+	$temperature[] = $PT1000ex1->getPT1000(1,2);
 
 //get GPIO out status
 	unset($gpioOUT);
@@ -75,13 +82,13 @@ if (($loginstatus == false) && ($getData == $get)){
 	transfer_javascript($loginstatus, $adminstatus, $temperature[0], $temperature[1],'null','null','null', $gpioOUT[2], $gpioOUT[3],'null','null','null','null');
 }
 //from all accessible Buttons => Light for Pool, etc.
-if (($getData == $set) && ($setOutNumber == 2 || $setOutNumber == 3)){
+if (($getData == $set) && ($setOutNumber == 0 || $setOutNumber == 1 || $setOutNumber == 2 || $setOutNumber == 3)){
 	$GPIO = new GPIO();
 	unset($gpioOUT);
 	$gpioOUT = $GPIO->setOutsingle($setOutNumber,$setOutValue);
 }
 
-function transfer_javascript($loginstatus, $adminstatus, $temperature0, $temperature1, $runstop, $gpioOUT0, $gpioOUT1, $gpioOUT2, $gpioOUT3, $gpioOUT4, $gpioIN0, $gpioIN1, $gpioIN2)
+function transfer_javascript($loginstatus, $adminstatus, $temperature0, $temperature1, $runstop, $gpioOUT0, $gpioOUT1, $gpioOUT2, $gpioOUT3, $gpioOUT4, $gpioIN0, $gpioIN1, $gpioIN2, $AIN0, $AIN1)
 {
 	$arr = array(	'loginstatus' => $loginstatus,
 			'adminstatus' => $adminstatus,
@@ -95,7 +102,9 @@ function transfer_javascript($loginstatus, $adminstatus, $temperature0, $tempera
 			'statusFreshwaterValve' => $gpioOUT4,
 			'statusNiveauSensor' => $gpioIN0,
 			'statusMixerSolar' => $gpioIN1,
-			'statusMixerBypass' => $gpioIN2
+			'statusMixerBypass' => $gpioIN2,
+			'Feuchte' => $AIN0,
+			'Temperatur' => $AIN1
 				);
 
 	echo json_encode($arr);
