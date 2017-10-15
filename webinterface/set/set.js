@@ -91,3 +91,8 @@ $("#hardware").on('click', function(){
 	window.location = "/set/hardware/hardware.html?ver=1";
 });
 
+$("#data_cloud").on('click', function(){
+	window.location = "/set/data_cloud/data_cloud.html?ver=0";
+});
+
+
