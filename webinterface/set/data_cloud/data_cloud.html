@@ -39,20 +39,7 @@
 				<div class="page-header">
 					<h3 style="color:#0087e8;">Ausgewählte Messstellen</h3>
 				</div>
-				<table class="table table-striped">
-				<th>Auswahl</th><th>Type</th><th>Sensorkennung</th><th>Messstellen_ID</th><th>Interval</th><th>Einheit</th><th>Umrechnung</th>
-
-				<tr>
-					<td>
-					<label><input type="radio" name="data_num" value=1></label>
-					</td>
-					<td>AIN1</td>
-					<td>Ext1</td>
-					<td>Feuchte_Halle1</td>
-					<td>15</td>
-					<td>%r.F</td>
-					<td>0.234</td>
-				</tr>
+			<table class="table table-striped">
 				<thead id="data_selected_list_head"></thead>
 				<tbody id="data_selected_userlist_body"></tbody>
 
@@ -71,18 +58,22 @@
 				</div>
 				<div class="input-group">	
 					<span class="input-group-addon">Wert</span>
-					<select id="Digi_IN_Select_Val" class="form-control"></select>
+					<select id="Digi_IN_Select_Val" class="form-control" style="min-width:200px;"></select>
+					<span class="input-group-addon">Ext.</span>
+					<input id="Digi_IN_Ext" type="text" class="form-control" value="Digi_IN" readonly></input>
 					<span class="input-group-addon">Zeit-Interval [Minuten]</span>
 					<select id="Digi_IN_Select_Interval" class="form-control"></select>
 				</div>
 				<p></p>
 				<div class="input-group">
 					<span class="input-group-addon">Messstellen ID</span>
-					<input id="Messstellen_ID_Digi_IN" type="text" class="form-control" placeholder="Messstellen Name ">
+					<input id="Messstellen_ID_Digi_IN" type="text" class="form-control" placeholder="Messstellen Name " style="min-width:200px;">
 					<span class="input-group-addon">Einheit</span>
 					<input id="Messstellen_Einheit_Digi_IN" type="text" class="form-control" >
+					<span class="input-group-addon">Umrechnung</span>
+					<input id="Messstellen_Umrechnung_Digi_IN" type="text" class="form-control" >
 					<span class="input-group-btn">
-						<button class="btn btn-default" type="button">Add</button>
+						<button id="Button_add_Digi_IN" class="btn btn-default" type="button" onclick="addtoCloudData('Digi_IN')">Add</button>
 					</span>
 				</div>
 
@@ -97,18 +88,22 @@
 				</div>
 				<div class="input-group">	
 					<span class="input-group-addon">Wert</span>
-					<select id="Digi_OUT_Select_Val" class="form-control"></select>
+					<select id="Digi_OUT_Select_Val" class="form-control" style="min-width:200px;"></select>
+					<span class="input-group-addon">Ext.</span>
+					<input id="Digi_IN_Ext" type="text" class="form-control" value="Digi_OUT" readonly></input>
 					<span class="input-group-addon">Zeit-Interval</span>
 					<select id="Digi_OUT_Select_Interval" class="form-control"></select>
 				</div>
 				<p></p>
 				<div class="input-group">
 					<span class="input-group-addon">Messstellen ID</span>
-					<input id="Messstellen_ID_Digi_OUT" type="text" class="form-control" placeholder="Messstellen Name ">
+					<input id="Messstellen_ID_Digi_OUT" type="text" class="form-control" placeholder="Messstellen Name " style="min-width:200px;">
 					<span class="input-group-addon">Einheit</span>
-					<input id="Messstellen_Einheit_Digi_Out" type="text" class="form-control" >
+					<input id="Messstellen_Einheit_Digi_OUT" type="text" class="form-control" >
+					<span class="input-group-addon">Umrechnung</span>
+					<input id="Messstellen_Umrechnung_Digi_OUT" type="text" class="form-control" >
 					<span class="input-group-btn">
-						<button class="btn btn-default" type="button">Add</button>
+						<button class="btn btn-default" type="button" onclick="addtoCloudData('Digi_OUT')">Add</button>
 					</span>
 				</div>
 			<p></p>

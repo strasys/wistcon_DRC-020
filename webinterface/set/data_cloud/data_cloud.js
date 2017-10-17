@@ -8,6 +8,7 @@
  */
 sortoutcache = new Date();
 var EEPROMext;
+var selected_line;
 /*
  * Asynchron server send function.
  */
@@ -78,28 +79,31 @@ function sethardwarehtmlinterface(callback){
 		switch(EEPROMext[i]) {
 			case "PT1000":
 				counter_PT1000 += 1;
-				idData = "PT1000"+counter_PT1000;
-				header = "PT1000 "+counter_PT1000;
+				var idData = "PT1000"+counter_PT1000;
+				var header = "PT1000 "+counter_PT1000;
+				var selectVal = "PT1000";
 				loadExtensions(i+1, idData, header, function(){
-					setSelectExt(idData+"_Select_Val", idData+"_Select_Interval", idData, function(){
+					setSelectExt(idData+"_Select_Val", selectVal, idData+"_Select_Interval", function(){
 					});
 				});
 				break;
 			case "AOUT":
 				counter_AOUT += 1;
-				idData = "AOUT"+counter_AOUT;
-				header = "Analoge Ausgänge "+counter_AOUT;
+				var idData = "AOUT"+counter_AOUT;
+				var header = "Analoge Ausgänge "+counter_AOUT;
+				var selectVal = "AOUT";
 				loadExtensions(i+1, idData, header, function(){	
-					setSelectExt(idData+"_Select_Val", idData+"_Select_Interval", idData, function(){
+					setSelectExt(idData+"_Select_Val", selectVal, idData+"_Select_Interval", function(){
 					});
 				});
 				break;
 			case "AIN":
 				counter_AIN += 1;
-				idData = "AIN"+counter_AIN;
-				header = "Analoge Eingänge";
+				var idData = "AIN"+counter_AIN;
+				var header = "Analoge Eingänge";
+				var selectVal = "AIN";
 				loadExtensions(i+1, idData, header, function(){
-					setSelectExt(idData+"_Select_Val", idData+"_Select_Interval", idData, function(){
+					setSelectExt(idData+"_Select_Val", selectVal, idData+"_Select_Interval", function(){
 					});
 				});
 				break;
@@ -142,12 +146,12 @@ function setSelectDigiOutput(callback){
 	});
 }
 
-function setSelectExt(idSelectVal, idSelectInterval, idData, callback){
-	
+function setSelectExt(idSelectVal, selectVal, idSelectInterval, callback){
+	var i=0;
 		for(i=0;i<4;i++){
 			var y = document.getElementById(idSelectVal);
 			var option1 = document.createElement("option");
-			option1.text = idData+"_"+(i+1);
+			option1.text = selectVal+"_"+(i+1);
 			y.options.add(option1);	
 		}
 	
@@ -181,13 +185,84 @@ function settimeinterval(idName, callback){
 	}
 }
 
+function getXMLDataCloud(callback){
+	setgetServer("GET", "/VDF.xml?sortoutcache="+sortoutcache.valueOf(),function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
+		{
+			var getXML = xhttp.responseXML;
+			var w = getXML.getElementsByTagName("data_cloud")[0];
+			var x = w.getElementsByTagName("datatocloud");
+			var z = x.length;
+			var i = 0;
+
+			$("#data_selected_list_head").empty();
+			$("#data_selected_userlist_body").empty();
+
+			//console.log("Anzahl Einträge = "+z);
+
+			$("<th>Auswahl</th><th>Type</th><th>Ext.</th><th>Messstellen_ID</th><th>Interval[min.]</th><th>Einheit</th><th>Umrechnung</th>").appendTo("#data_selected_list_head");
+
+			for (i=0; i<z; i++){
+				var tab_val_string = x[i].childNodes[0].nodeValue;
+				//console.log(tab_val_string);
+				var tab_val_single = tab_val_string.split(":");
+				
+				$("<tr><td><label><input type=\"radio\" name=\"data_num\" value=\""+i+"\"></label></td>"+
+					"<td>"+tab_val_single[0]+"</td>"+
+					"<td>"+tab_val_single[1]+"</td>"+
+					"<td>"+tab_val_single[2]+"</td>"+
+					"<td>"+tab_val_single[3]+"</td>"+
+					"<td>"+tab_val_single[4]+"</td>"+
+					"<td>"+tab_val_single[5]+"</td>"+
+				"</tr>")
+				.appendTo("#data_selected_userlist_body");
+			}	
+		}
+		if (callback){
+			callback();
+		}	
+	});
+		
+}
+
+function setXMLDataCloud(Node_Name,Data_String, callback2){
+		setgetServer("post","datatoXML.php",function()
+			{
+				if (xhttp.readyState==4 && xhttp.status==200)
+				{
+					var getResponse = JSON.parse(xhttp.responseText);
+					if (callback2){
+						callback2(getResponse.write_XML);
+					}
+				}
+			},"Node_Name="+Node_Name+"&Data_String="+Data_String);
+}	
+
+
+function deleteXMLDataCloud(Node_Name, dataNo, callback2){
+		setgetServer("post","dataDeleteXML.php",function()
+			{
+				if (xhttp.readyState==4 && xhttp.status==200)
+				{
+					var getResponse = JSON.parse(xhttp.responseText);
+					if (callback2){
+						callback2(getResponse.delete_XML);
+					}
+				}
+			},"Node_Name="+Node_Name+"&dataNo="+dataNo);
+}	
+
+
 // load functions ad webpage opening
 function startatLoad(){
 	loadNavbar(function(){
 		setSelectDigiOutput(function(){
 			setSelectDigiInput(function(){
 				getExtensions(function(){
-					 sethardwarehtmlinterface();
+					getXMLDataCloud(function(){
+						sethardwarehtmlinterface();
+					});
 				});
 			});
 	
@@ -195,6 +270,25 @@ function startatLoad(){
 	});
 }
 window.onload=startatLoad();
+
+// select user line
+$("#data_selected_userlist_body").on('change', function(){
+	selected_line = $('input[name=data_num]:checked', '#data_selected_userlist_body').val();
+	//console.log(selected_line);
+});
+
+
+// select user line
+$("#Button_delete_data").on('click', function(){
+	var Node_Name = "datatocloud";
+	deleteXMLDataCloud(Node_Name, selected_line, function(response){
+		//console.log(response);
+		setTimeout(function(){
+			getXMLDataCloud();	
+		}, 500);	
+	});
+
+});
 
 //Load the top fixed navigation bar and highlight the 
 //active site roots.
@@ -225,33 +319,31 @@ function loadNavbar(callback1){
 					callback1();
 				}
 			});
- }
-/*
-$("#DigiIN").on('click', function(){
-	window.location = "gpioIN.html?ver=0";
-});
+}
 
-$("#DigiOUT").on('click', function(){
-	window.location = "gpioOut.html?ver=0";
-});
+function addtoCloudData(idButton){
+	
+	var Val_Name = document.getElementById(idButton+"_Select_Val").value;
+	var Interval = document.getElementById(idButton+"_Select_Interval").value;
+	var Messstelle_Name = document.getElementById("Messstellen_ID_"+idButton).value;
+	var MessstellenEinheit = document.getElementById("Messstellen_Einheit_"+idButton).value;
+	var Extension_Num = document.getElementById(idButton+"_Ext").value;
+	var Messstellen_Umrechnung = document.getElementById("Messstellen_Umrechnung_"+idButton).value;
 
-$("#Extension1").on('click', function(){
-
-	window.location = EEPROMext[0]+".html?ver=1&extension1&extensionNumkind1";
-});
-$("#Extension2").on('click', function(){
-
-	window.location = EEPROMext[1]+".html?ver=0&extension2&extensionNumkind2";
-});
-$("#Extension3").on('click', function(){
-
-	window.location = EEPROMext[2]+".html?ver=0&extension3&extensionNumkind3";
-});
-$("#Extension4").on('click', function(){
-
-	window.location = EEPROMext[3]+".html?ver=1&extension4&extensionNumkind4";
-});
-*/
+	//add Line to Cloud Data
+	var Node_Name = "data_cloud";
+	var Data_String = Val_Name+":"+Extension_Num+":"+Messstelle_Name+":"+Interval+":"+MessstellenEinheit+":"+Messstellen_Umrechnung;
+	
+	//console.log(Data_String);
+	setXMLDataCloud(Node_Name,Data_String, function(response){
+		//console.log("Schreib Rückmeldung ="+response);
+		//clear thead and tbody of table before rewrite
+		setTimeout(function(){
+			getXMLDataCloud();
+		}, 500);	
+	});
+	
+}
 
 function loadExtensions(ExtensionNo, idData, header, callback){
 
@@ -261,18 +353,23 @@ function loadExtensions(ExtensionNo, idData, header, callback){
 				"</div>"+
 				"<div class=\"input-group\">"+	
 					"<span class=\"input-group-addon\">Wert</span>"+
-					"<select id=\""+idData+"_Select_Val\" class=\"form-control\"></select>"+
+					"<select id=\""+idData+"_Select_Val\" class=\"form-control\" style=\"min-width:200px;\"></select>"+
+					"<span class=\"input-group-addon\">Ext.</span>"+
+					"<input id=\""+idData+"_Ext\" type=\"text\" class=\"form-control\" value=\""+ExtensionNo+"\" readonly></input>"+
 					"<span class=\"input-group-addon\">Zeit-Interval [Minuten]</span>"+
 					"<select id=\""+idData+"_Select_Interval\" class=\"form-control\"></select>"+
 				"</div>"+
 				"<p></p>"+
 				"<div class=\"input-group\">"+
 					"<span class=\"input-group-addon\">Messstellen ID</span>"+
-					"<input id=\"Messstellen_ID"+idData+"\" type=\"text\" class=\"form-control\" placeholder=\"Messstellen Name \">"+
+					"<input id=\"Messstellen_ID_"+idData+"\" type=\"text\" class=\"form-control\" placeholder=\"Messstellen Name \" style=\"min-width:200px;\">"+
 					"<span class=\"input-group-addon\">Einheit</span>"+
-					"<input id=\"Messstellen_Einheit"+idData+"\" type=\"text\" class=\"form-control\">"+
+					"<input id=\"Messstellen_Einheit_"+idData+"\" type=\"text\" class=\"form-control\">"+
+					"<span class=\"input-group-addon\">Umrechnung</span>"+
+					"<input id=\"Messstellen_Umrechnung_"+idData+"\" type=\"text\" class=\"form-control\" >"+
+
 					"<span class=\"input-group-btn\">"+
-						"<button id=\"Button_add_"+idData+"\" class=\"btn btn-default\" type=\"button\">Add</button>"+
+						"<button id=\"Button_add_"+idData+"\" class=\"btn btn-default\" type=\"button\" onclick=\"addtoCloudData('"+idData+"')\">Add</button>"+
 					"</span>"+
 				"</div>"+
 				"<p></p>"+
