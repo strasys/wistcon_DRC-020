@@ -58,17 +58,6 @@ function getExtensions(callback){
 		});		
 }
 
-function setCookie(cname, cvalue, exdays, callback) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-
-    if (callback){
-	callback();
-    }
-}
-
 function sethardwarehtmlinterface(callback){
 	var a = 1;
 	var counter_PT1000 = 0;
@@ -191,6 +180,19 @@ function getXMLDataCloud(callback){
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
 			var getXML = xhttp.responseXML;
+			//DataCloudPush Mode
+			var wM = getXML.getElementsByTagName("OperationModeDevice")[0];
+			var xM = wM.getElementsByTagName("PushDataCloudService");
+			var statusPushMode = xM[0].childNodes[0].nodeValue;
+			switch (statusPushMode){
+				case "run":
+					document.getElementById("radioCloudPushModeRUN").checked = true;
+					break;
+				case "stop":
+					document.getElementById("radioCloudPushModeOFF").checked = true;
+					break;
+			}
+			//data_cloud
 			var w = getXML.getElementsByTagName("data_cloud")[0];
 			var x = w.getElementsByTagName("datatocloud");
 			var z = x.length;
@@ -222,11 +224,10 @@ function getXMLDataCloud(callback){
 		if (callback){
 			callback();
 		}	
-	});
-		
+	});		
 }
 
-function setXMLDataCloud(Node_Name,Data_String, callback2){
+function setXMLDataCloud(Node_Name, Data_String, callback2){
 		setgetServer("post","datatoXML.php",function()
 			{
 				if (xhttp.readyState==4 && xhttp.status==200)
@@ -253,6 +254,19 @@ function deleteXMLDataCloud(Node_Name, dataNo, callback2){
 			},"Node_Name="+Node_Name+"&dataNo="+dataNo);
 }	
 
+function setDataPushModeXML(radioID){
+	var ModeStatus = document.getElementById(radioID).value;		
+	
+		setgetServer("post","setPushModeXML.php",function()
+		{
+			if (xhttp.readyState==4 && xhttp.status==200)
+			{
+					
+			}
+		},
+		"Data_String="+ModeStatus+
+		"&Node_Name=OperationModeDevice");
+}
 
 // load functions ad webpage opening
 function startatLoad(){

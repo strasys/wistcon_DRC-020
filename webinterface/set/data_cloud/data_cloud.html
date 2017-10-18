@@ -33,6 +33,26 @@
 			<li><a href="/set/set.html?ver=0">Set</a></li>
 			<li class="active">Daten Management</li>
 		</ol>
+	<div class="databox info">
+	<div class="row" id="NiveauModeField">
+		<div class="clo-xs-12 col-sm-12 col-md-12" id="SolarCheckboxesOperationmode">
+			<h4 style="color:#0087e8;">Run / Stop Push Data to Cloud Service</h4>
+			<div class="radio">
+ 			<label>
+      				<input type="radio" id="radioCloudPushModeOFF" name="OptionsRadios" value="stop" onclick="setDataPushModeXML('radioCloudPushModeOFF')">
+				<h4><b>Stop </b></h4>
+   			</label>
+			</div>
+			<div class="radio">
+ 			<label>
+      			<input type="radio" id="radioCloudPushModeRUN" name="OptionsRadios" value="run" onclick="setDataPushModeXML('radioCloudPushModeRUN')">
+				<h4><b>Run</b></h4>
+			</label>
+			</div>
+		</div>	
+	</div>
+	</div>
+
 	<div class="row">
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div id="data_selected" class="databox info" style="border-radius:3px; min-width:100%;">
