@@ -38,13 +38,13 @@
 	<InputName>IN 12</InputName>
 </GPIOIN>
 <GPIOOUT>
-	<OutputName>OUT 1</OutputName>
+	<OutputName>Relay</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>OUT 2</OutputName>
+	<OutputName>Ventil 1</OutputName>
 </GPIOOUT>
 <GPIOOUT>
-	<OutputName>OUT 3</OutputName>
+	<OutputName>Ventil 2</OutputName>
 </GPIOOUT>
 <GPIOOUT>
 	<OutputName>OUT 4</OutputName>
@@ -74,17 +74,17 @@
 	<OutputName>OUT 12</OutputName>
 </GPIOOUT>
 <PT1000>
-	<PT1000Name1>PT 1000 1</PT1000Name1>
-</PT1000>
+	<PT1000Name1>PT1000 1</PT1000Name1>
+<PT1000Name2>Büro Temp.</PT1000Name2></PT1000>
 <PT1000>
-	<PT1000Name1>PT 1000 2</PT1000Name1>
-</PT1000>
+	<PT1000Name1>Außentemperatur</PT1000Name1>
+<PT1000Name2>PT1000 test</PT1000Name2></PT1000>
 <PT1000>
-	<PT1000Name1>PT1000 3</PT1000Name1>
-</PT1000>
+	<PT1000Name1>Büro Wand</PT1000Name1>
+<PT1000Name2>PT1000 3</PT1000Name2></PT1000>
 <PT1000>
 	<PT1000Name1>PT1000 4</PT1000Name1>
-</PT1000>
+<PT1000Name2>PT1000 4</PT1000Name2></PT1000>
 <PT1000>
 	<PT1000Name2>PT1000 1</PT1000Name2>
 </PT1000>
@@ -122,10 +122,10 @@
 	<PT1000Name4>PT1000 4</PT1000Name4>
 </PT1000>
 <AIN>
-	<AINName>AIN 1</AINName>
+	<AINName>Feuchte Analog</AINName>
 </AIN>
 <AIN>
-	<AINName>AIN 2</AINName>
+	<AINName>Temp. Analog</AINName>
 </AIN>
 <AIN>
 	<AINName>AIN 3</AINName>
@@ -169,14 +169,17 @@
 <AOUT>
 	<AOUTName3>AOUT 4</AOUTName3>
 </AOUT>
+
+<data_cloud><datatocloud>PT1000_1:2:temp_Außen:1:°C:1</datatocloud><datatocloud>PT1000_2:2:temp_BüroWand:1:°C:1</datatocloud><datatocloud>AIN_0:1:feuchte_Büro:1:%rel.F.:0.024414</datatocloud><datatocloud>AIN_1:1:temp_feuchteBüro:1:°C:0.012207</datatocloud></data_cloud>
+
 <ButtonText>
 	<RinseBackButton>Rückspülen</RinseBackButton>
 </ButtonText>
 
 <CleaningInterval>
-	<Start>00:00</Start>
-	<Stop>00:00</Stop>
-	<Periode>00:00</Periode>
+	<Start>14:40</Start>
+	<Stop>17:30</Stop>
+	<Periode>02:50</Periode>
 </CleaningInterval>
 <CleaningInterval>
 	<Start>00:00</Start>
@@ -198,8 +201,8 @@
 	<tipCleaningTime>0</tipCleaningTime>
 </CleaningSetting>
 <SolarSetting>
-	<operationMode>OFF</operationMode>
-	<backWaterTemp>25</backWaterTemp>
+	<operationMode>AUTO</operationMode>
+	<backWaterTemp>28</backWaterTemp>
 	<diffONTemp>7</diffONTemp>
 	<diffOFFTemp>5</diffOFFTemp>
 	<SwitchOFFdelay>2</SwitchOFFdelay>
@@ -218,6 +221,7 @@
 <OperationModeDevice>
 	<AutomaticHand>stop</AutomaticHand>
 	<DNSService>run</DNSService>
+	<PushDataCloudService>run</PushDataCloudService>
 </OperationModeDevice>
 <Owner>
 	<email>johannes.strasser@wistcon.at</email>

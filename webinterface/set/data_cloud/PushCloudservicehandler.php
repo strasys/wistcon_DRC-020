@@ -8,10 +8,6 @@ include_once ('/var/www/privateplc_php.ini.php');
 session_start();
 include_once ('/var/www/authentification.inc.php');
 
-$setgetDNSserviceStatus = $_POST['setgetDNSserviceStatus'];
-$setrunstopStatus = $_POST['setrunstopStatus'];
-//$getLoginStatus = "g";
-
 if ($adminstatus == true)
 {
 	$statusFile = fopen("/tmp/CloudPushservicestatus.txt", "w");
@@ -22,7 +18,7 @@ if ($adminstatus == true)
 	}
 	elseif ($statusFile)
 	{
-		switch ($setrunstopStatus){
+		switch ($_POST["setrunstopStatus"]){
 			case 0:
 				$statusWord = "stop";
 				$runstop = 0;
@@ -41,24 +37,13 @@ if ($adminstatus == true)
 		fclose($statusFile);
 
 		$xml=simplexml_load_file("/var/www/VDF.xml") or die("Error: Cannot create object");
-		$xml->OperationModeDevice[0]->DNSService = $statusWord;
+		$xml->OperationModeDevice[0]->PushDataCloudService = $statusWord;
 		$xml->asXML("/var/www/VDF.xml");
 
 	}
-	transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg);
 }
 
 
 
-function transfer_javascript($loginstatus, $adminstatus, $runstop, $errorMsg)
-{
-	$arr = array(	'loginstatus' => $loginstatus ,
-					'adminstatus' => $adminstatus ,
-					'runstop' => $runstop,
-					'errorMsg' => $errorMsg
-				);
-
-	echo json_encode($arr);
-}
 
 ?>

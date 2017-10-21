@@ -11,58 +11,70 @@ ini_set('display_startup_errors', 1);
 /*
 ini_set('display_errors', 0);
 ini_set('error_log', '/pfad/zur/logdatei/php_error.log');
-*/
-include_once ('CloudPushservicestatus.inc.php');
+ */
+header("Content-Type: text/html; charset=utf-8");
 
+include_once ('PushCloudloopcontrol.inc.php');
+include_once ('DataCloudClass.inc.php');
 //add function to get data from XML => datatocloud
 
-$dnsloop = new CloudPushDataloopcontrol();
+$dnsloop = new PushCloudloopcontrol();
+
+$DataCloudClass = new DataCloudClass();
+
+$FetchXMLData = $DataCloudClass->getXMLData();
+$NumberofDatasets = sizeof($FetchXMLData);
+
+$EEPROM = new EEPROM();
+$DeviceID = $EEPROM->getDeviceID();
 
 $loopstatus = true;
-//The device ID shall be stored in the final basic setup *.xml.
-exec("flock /tmp/flockrweeprom /usr/lib/cgi-bin/rweeprom r 2 5 192 64", $deviceID);
-$deviceIDinfo = trim($deviceID[0]);
-$data = array(
-	'deviceID' => $deviceIDinfo
-	);
-$data_string="";
-foreach($data as $key=>$value) 
-{
- $data_string = $key.'='.$value.'&'; 
-}
 
-$trimmed = rtrim($data_string, '&');
-//echo $trimmed."<br>";
-echo $loopstatus;	
-//To lock the service for the user a lock key must be set as well in the password file.
-//echo http_build_query($data) . "\n";
-while ($loopstatus)
-{
+//echo time()."<br>";
+
+while ($loopstatus){
 	$loopstatus = $dnsloop->runstop();
-	set_time_limit(5);
-	//sudo apt-get install php5-curl => needed
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'https://www.strasys.at/dns/getclientIP.php');
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_POST, count($data));
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	$return = curl_exec($ch);
-	curl_close($ch);
-//	echo $return;
-	/*
-	//start request
 
-	$ch = curl_init();
-	//$data = array('deviceID' => $deviceID);
-	curl_setopt($ch, CURLOPT_URL, 'http://dns.strasys.at/getclientIP.php');
-	curl_setopt($ch, CURLOPT_POST, 1);
-			CURLOPT_SSL_VERIFYPEER
-	curl_exec($ch);
-	curl_close($ch);
+	set_time_limit(10);
+
+	$t = 0;
+	$transfer = array();
+
+	for($i=0;$i<$NumberofDatasets;$i++){
+		//SendData array = DeviceID, metering_ID, value_metering, timestamp, unit 
+		$SendData = $DataCloudClass->getDatatoSend($FetchXMLData[$i]['type'],
+			$FetchXMLData[$i]['ext'],
+			$FetchXMLData[$i]['metering_ID'],
+			$FetchXMLData[$i]['time_interval'],
+			$FetchXMLData[$i]['unit'],
+			$FetchXMLData[$i]['factor'],
+			$FetchXMLData[$i]['timestamp'],
+			$DeviceID
+		);
+
+		if($SendData != NULL){
+			$transfer[$t] = $SendData;
+			//set timestamp to calculate next push ivent
+			$FetchXMLData[$i]["timestamp"] = $SendData[3];
+			$t+=1;
+		}
+	}
+	
+	if ($transfer != NULL){
+		$DataCloudClass->SendData($transfer);	
+	}
+	
+/*	print_r($transfer);
+	ob_flush();
+        flush();
+ 
  */
-	sleep(60);
-}
+	sleep(5);
 
+}
+/*
+	print_r($transfer);
+	ob_flush();
+        flush();
+ */
 ?>

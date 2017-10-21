@@ -24,5 +24,11 @@ class EEPROM
 
 		return $EEPROMdata;
 	}
+	//Returns device ID
+	function getDeviceID()
+	{
+		exec("flock /tmp/lockrweeprom /usr/lib/cgi-bin/rweeprom r 2 5 192 64", $deviceID);
+		return trim($deviceID[0]);
+	}
 }
 ?>

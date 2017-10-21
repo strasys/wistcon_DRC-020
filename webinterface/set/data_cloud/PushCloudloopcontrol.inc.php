@@ -7,7 +7,7 @@
  * This stops the composer.php process.
  */
 
-class CloudPushDataloopcontrol
+class PushCloudloopcontrol
 {
 
 function runstop()
@@ -36,7 +36,7 @@ elseif ($statusFile == true)
 				break;
 	}
 }
-
+//return true;
 return $statusbool; 
 }
 

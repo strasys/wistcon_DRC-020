@@ -27,8 +27,8 @@ if (($loginstatus == true) && ($getData == $get)){
 	$GPIO = new GPIO();
 	$AIN = new AIN();
 
-	$temperature[] = $PT1000ex1->getPT1000(0,2);
 	$temperature[] = $PT1000ex1->getPT1000(1,2);
+	$temperature[] = $PT1000ex1->getPT1000(2,2);
 
 //get Composer status
 	$statusFile = fopen("/tmp/composerstatus.txt", "r");
@@ -60,9 +60,9 @@ if (($loginstatus == true) && ($getData == $get)){
 	$gpioIN = $GPIO->getIn();
 //get Analog in status
 	$AIN0val = $AIN->getAIN(0,1);
-	$AIN0 = round ((($AIN0val / 4096) * 100),1);
+	$AIN0 = round (($AIN0val * 0.024414),0);
 	$AIN1val = $AIN->getAIN(1,1);
-	$AIN1 = round(((50 * $AIN1val) / 4096),1);
+	$AIN1 = round(($AIN1val * 0.012207),0);
 
 	transfer_javascript($loginstatus, $adminstatus, $temperature[0], $temperature[1], $runstop, $gpioOUT[0], $gpioOUT[1], $gpioOUT[2], $gpioOUT[3], $gpioOUT[4], $gpioIN[0], $gpioIN[1], $gpioIN[2], $AIN0, $AIN1);
 
@@ -72,8 +72,8 @@ if (($loginstatus == false) && ($getData == $get)){
 	$PT1000ex1 = new PT1000();
 	$GPIO = new GPIO();
 
-	$temperature[] = $PT1000ex1->getPT1000(0,2);
 	$temperature[] = $PT1000ex1->getPT1000(1,2);
+	$temperature[] = $PT1000ex1->getPT1000(2,2);
 
 //get GPIO out status
 	unset($gpioOUT);

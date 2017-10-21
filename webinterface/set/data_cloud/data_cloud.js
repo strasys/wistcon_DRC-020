@@ -110,7 +110,7 @@ function setSelectDigiInput(callback){
 		for(i=0;i<12;i++){
 			var y = document.getElementById("Digi_IN_Select_Val");
 			var option1 = document.createElement("option");
-			option1.text = "DigiIN"+i;
+			option1.text = "DigiIN_"+i;
 			y.options.add(option1);
 		}
 
@@ -125,7 +125,7 @@ function setSelectDigiOutput(callback){
 		for(i=0;i<12;i++){
 			var y = document.getElementById("Digi_OUT_Select_Val");
 			var option1 = document.createElement("option");
-			option1.text = "DigiOUT"+i;
+			option1.text = "DigiOUT_"+i;
 			y.options.add(option1);	
 		}
 	
@@ -140,7 +140,7 @@ function setSelectExt(idSelectVal, selectVal, idSelectInterval, callback){
 		for(i=0;i<4;i++){
 			var y = document.getElementById(idSelectVal);
 			var option1 = document.createElement("option");
-			option1.text = selectVal+"_"+(i+1);
+			option1.text = selectVal+"_"+(i);
 			y.options.add(option1);	
 		}
 	
@@ -257,15 +257,14 @@ function deleteXMLDataCloud(Node_Name, dataNo, callback2){
 function setDataPushModeXML(radioID){
 	var ModeStatus = document.getElementById(radioID).value;		
 	
-		setgetServer("post","setPushModeXML.php",function()
+		setgetServer("post","PushCloudservicehandler.php",function()
 		{
 			if (xhttp.readyState==4 && xhttp.status==200)
 			{
 					
 			}
 		},
-		"Data_String="+ModeStatus+
-		"&Node_Name=OperationModeDevice");
+		"setrunstopStatus="+ModeStatus);
 }
 
 // load functions ad webpage opening
@@ -297,11 +296,10 @@ $("#Button_delete_data").on('click', function(){
 	var Node_Name = "datatocloud";
 	deleteXMLDataCloud(Node_Name, selected_line, function(response){
 		//console.log(response);
-		setTimeout(function(){
-			getXMLDataCloud();	
-		}, 500);	
-	});
-
+		$("#data_selected_userlist_body").load(window.location.href + " #data_selected_userlist_body", function(){
+			getXMLDataCloud();
+		});
+	});		
 });
 
 //Load the top fixed navigation bar and highlight the 
@@ -352,11 +350,10 @@ function addtoCloudData(idButton){
 	setXMLDataCloud(Node_Name,Data_String, function(response){
 		//console.log("Schreib Rückmeldung ="+response);
 		//clear thead and tbody of table before rewrite
-		setTimeout(function(){
+		$("#data_selected_userlist_body").load(window.location.href + " #data_selected_userlist_body", function(){
 			getXMLDataCloud();
-		}, 500);	
-	});
-	
+		});	
+	});	
 }
 
 function loadExtensions(ExtensionNo, idData, header, callback){
