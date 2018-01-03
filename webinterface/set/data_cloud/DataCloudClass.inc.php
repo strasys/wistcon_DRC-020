@@ -35,6 +35,7 @@ function getXMLData()
 			} else {
 				//set inital timestamp
 				$date = new DateTime();
+				//$_SERVER['REQUEST_TIME'];
 				$timestamp = $date->getTimestamp();
 				$data_split_array[$variable_array[$s]] = $timestamp;
 			}

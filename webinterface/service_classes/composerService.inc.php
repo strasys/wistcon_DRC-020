@@ -5,7 +5,6 @@
 	Johannes Strasser
 	05.08.2017
 	www.wistcon.at
-<<<<<<< HEAD
  */
 
 //error_reporting(E_ALL | E_STRICT);
@@ -14,9 +13,6 @@
 //ini_set('display_startup_errors', 1);
 //
 
-=======
-*/
->>>>>>> 967dd34833c7285c8e58414b0b0506ac557a5934
 class composerService
 {
 	//get composer Status
@@ -30,20 +26,13 @@ class composerService
 		$statusFile = fopen("/tmp/composerstatus.txt", "w");
 		fwrite($statusFile, "stop");
 		fclose($statusFile);
-<<<<<<< HEAD
 		echo "test";
-=======
->>>>>>> 967dd34833c7285c8e58414b0b0506ac557a5934
 		$runstop = false;
 	}
 	elseif ($statusFile)
 	{
 		$statusWord = trim(fgets($statusFile, 5));
-<<<<<<< HEAD
 		fclose($statusFile);
-=======
-		fclose($status);
->>>>>>> 967dd34833c7285c8e58414b0b0506ac557a5934
 
 	
 		switch ($statusWord){
@@ -55,11 +44,7 @@ class composerService
 			break;
 		}
 	}
-<<<<<<< HEAD
 	return $runstop;
-=======
-	return (bool) $runstop;
->>>>>>> 967dd34833c7285c8e58414b0b0506ac557a5934
 	}
 
 	//set composer Status
@@ -97,13 +82,7 @@ class composerService
 		$xml->OperationModeDevice[0]->AutomaticHand = $statusWord;
 		$xml->asXML("/var/www/VDF.xml");
 	}
-<<<<<<< HEAD
 	}	
-=======
-	}
-
-	
->>>>>>> 967dd34833c7285c8e58414b0b0506ac557a5934
 
 }
 ?>

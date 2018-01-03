@@ -21,11 +21,6 @@ $error_Log = array (
 	'owner_reg' => 0
 );
 
-//get Log status
-if ($getLogData == $get){
-	transfer_javascript($loginstatus, $adminstatus);
-}
-
 if (($_POST['CheckVeryCode'] == $check) && ($adminstatus)){ 
 
 	unset ($data_string, $data, $deviceIDval);
@@ -53,6 +48,7 @@ if (($_POST['CheckVeryCode'] == $check) && ($adminstatus)){
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+	curl_setopt($ch, CURLOPT_ENCODING ,"");
 	$return = curl_exec($ch);
 	curl_close($ch);
 
@@ -93,7 +89,7 @@ if (($_POST['CheckRegistrationStatus'] == "RS") && ($adminstatus)){
 	 $data_string = $data_string.'&'.$key.'='.$value; 
 	}
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'https://www.strasys.at/dns/getRegistrationData.php');
+	curl_setopt($ch, CURLOPT_URL, 'https://www.strasys.at/registration/getRegistrationStatus.php');
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_POST, count($data));

@@ -27,7 +27,26 @@
 				<h3><b> Produktregistrierung Eigentümer</b></h3>
 			</div>
 			<div class="panel-body">
-					
+				<!-- Start Owner Registration Product not registered --!>
+				<div id = "reg_form_owner_start" class="row">
+					<div class="col-xs-0 col-sm-3 col-md-3"></div>
+					<div class="col-xs-12 col-sm-6 col-md-6">
+						<div id="div-login-msg-customer" class="login-msg">
+                                			<div id="icon-login-msg" class="login-icon glyphicon glyphicon-chevron-right"></div>
+                                			<span id="text-login-msg">Eingabe Benutzernamen und Passwort</span>
+			   			</div>
+						<br>
+			    			<input id="login_username" class="form-control" type="text" placeholder="Benutzername" required autocomplete="on">
+						<br>
+						<input id="login_password" class="form-control" type="password" placeholder="Passwort" required>
+						<br>
+      						<div>
+                                		<button id="login_button_submit_customer" type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+					</div>	
+					<div class="col-xs-0 col-sm-3 col-md-3"></div>
+				</div>	
+				<!-- End Owner Registration Product not registered --!>
+	
 				<!-- Start Owner Registration form -->
 				<div id = "reg_form_owner" class="row">
 					<div class="col-xs-12 form-group">			
@@ -136,18 +155,6 @@
 			</div>
   		</div>
 	</div>	
-<!-- Processing Modal -->
-<div id="waitProcessIndication" class="positionontop">
-	<!-- Begin Modal -->
-	<div class="modal-dialog modalpos">
-		<div class="modal-content">
-			<div class="modal-body">				
-				<div class="loader"></div>
-			</div>
-		</div>
-	</div>
-</div>
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="/jQuery/3.2.1/jquery.min.js"></script> 
     <!-- Include all compiled plugins (below), or include individual files as needed -->

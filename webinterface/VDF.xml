@@ -221,7 +221,7 @@
 <OperationModeDevice>
 	<AutomaticHand>stop</AutomaticHand>
 	<DNSService>run</DNSService>
-	<PushDataCloudService>run</PushDataCloudService>
+	<PushDataCloudService>stop</PushDataCloudService>
 </OperationModeDevice>
 <Owner>
 	<email>johannes.strasser@wistcon.at</email>

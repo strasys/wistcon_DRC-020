@@ -1,7 +1,7 @@
 /**
  * Program to Register the product for a user
  *   
- * 01.01.2017
+ * 01.01.2018
  * Johannes Strasser
  * 
  * www.strasys.at
@@ -19,9 +19,9 @@ function getData(setget, url, cfunc, senddata){
 	xhttp.send(senddata);
 }
 
-
+//Check if session is activ
 function getloginstatus(callback1){
-		getData("post","deviceOwnerRegistration.php",function()
+		getData("post","../../userLogStatus.php",function()
 		{
 			if (xhttp.readyState==4 && xhttp.status==200)
 			{
@@ -35,10 +35,8 @@ function getloginstatus(callback1){
 				callback1();
 				}
 			}
-		},"getLogData=g");		
+		});		
 }
-
-
 		
 // Register owner user at wistcon - server and start verification process
 function RegisterOwnerUser(gender, firstName_str, FamilyName_str, street_str, number_str, PLZ_str, City_str, Country_str, email_str, password_str, callback3){	
@@ -77,9 +75,50 @@ function RegisterOwnerUser(gender, firstName_str, FamilyName_str, street_str, nu
 	);
 }
 
+//Alert information
+function DisplayLoginInformation(statusCustomerLogin, callback3){
+	$(window).scrollTop(0);
+	switch (statusCustomerLogin){
+		case -1:
+			$("#icon-login-msg").removeClass();
+			$("#icon-login-msg").addClass("login-icon glyphicon glyphicon-remove error");
+			$("#text-login-msg").html("Login fehlgeschlagen!");
+			$("#div-login-msg-customer").removeClass();
+			$("#div-login-msg-customer").addClass("login-msg error");
+			break;
+		case 1:
+			$("#icon-login-msg").removeClass();
+			$("#icon-login-msg").addClass("login-icon glyphicon glyphicon-ok success");
+			$("#text-login-msg").html("Login erfolgreich!");
+			$("#div-login-msg-customer").removeClass();
+			$("#div-login-msg-customer").addClass("login-msg success");
+			break;
+	}
+
+	if (callback3){
+		callback3();
+	}	
+ }
+
+// request new e-mail verification code
+function requestNewemailVerificationCode(callback){
+	getData("post","deviceOwnerRegistrationVerification.php",function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
+		{
+			getNewVeryData = JSON.parse(xhttp.responseText);
+			var verykeysend = getNewVeryData.verykeysend;
+			var email = getNewVeryData.email;			
+			if(callback){
+				callback(verykeysend, email);
+			}
+		}
+	},"progkey=reqVery");
+}
+
 // Submit verification code
 function handler_submit_very_code(veryCode, email, username, callback){	
-	getData("post","deviceOwnerRegistration.php",function()
+	getData("post","deviceOwnerRegistrationVerification.php",function()
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
@@ -150,8 +189,44 @@ function submit_very_code(){
 	});
 }
 
-function getNewVeryCode(){
-	// add code
+function startNewAccountVerification(){
+	$("#reverification").remove();
+	$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
+	requestNewemailVerificationCode(function(verykeysend, email){
+		if ((verykeysend == -1) && (email == "")){
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("<div id=\"fatalerrorreverificaton\"><h3 style=\"color:red;\"><strong>Schwerwiegender Fehler!</strong></h3>"+
+			"<p><strong>Die Datenbank Informationen sind nicht konsistent!<br>"+
+			"Starten Sie die Registrierung nach einem erneuten Logout / Login erneurt!</strong></p>"+
+			"<br>"+
+			"<p><strong>Tritt das Problem erneut auf kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
+			"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+		}
+		else if ((verykeysend == -1) && (email != "")){
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("<div id=\"errorreverificaton\"><h3 style=\"color:red;\"><strong>Es ist ein Fehler aufgetreten!</strong></h3>"+
+			"<p><strong>Beim Versand des Aktivierungs e-mails ist ein Fehler aufgetreten!<br>"+
+			"Bitte starten Sie die Verifizierung erneut!</strong></p>"+
+			"<br>"+
+			"<p><strong>Tritt das Problem erneut auf kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
+			"<br"+	
+			"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"startNewAccountVerification()\" value=\"e-Mail Verifizierung\" >"+
+			"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+		}
+		else if ((verykeysend == 1) && (email != "")){
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("<div id=\"successverification\"><h3 style=\"color:green;\"><strong>Verifizierungs e-mail erfolgreich versandt!</strong></h3>"+
+			"<p><strong>Wir haben Ihnen eine Account Aktivierungs e-mail an <strong>"+email+"</strong> gesendet.<br>"+
+			"Bitte bestätigen Sie diesen über den im e-mail angehängten link innerhalb von 24h!</strong></p>"+
+			"<br>"+
+			"<p>Achtung! Es kommt vor, dass das e-mail in Ihrem Spam Ordner landedt!</p>"+
+			"<p>Haben Sie das e-mail versehentlich gelöscht, können Sie über den Button \"e-Mail Verifizierung\" ein Neues Aktivierungs e-mail anfordern.</p>"+
+			"<br>"+	
+			"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"startNewAccountVerification()\" value=\"e-Mail Verifizierung\">"+
+			"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+		}
+
+	});
 }
 
 function setSelectMenuesValues(){
@@ -488,62 +563,62 @@ function checkProductRegistrationEntry(){
 
 // Submit data to server => checkRegistrationStatus()
 function checkRegistrationStatus(callback){
-	$("#waitProcessIndication").modal('show');
-	
-	getData("post","deviceOwnerRegistration.php",function()
+	getData("post","deviceOwnerRegistrationStatus.php",function()
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
-			var getData = JSON.parse(xhttp.responseText);
-			ownerRegisterStatus_check = [
-				(getData.RegistrationStatus),
-				(getData.AccountActivation),
-				(getData.dataBaseError),
-				(getData.email),
-				(getData.gender),
-				(getData.firstName),
-				(getData.FamilyName),
-				(getData.userName)
-				];
-			$("#waitProcessIndication").modal('toggle');
-
+			DataStatus = JSON.parse(xhttp.responseText);		
 			if(callback){
 				callback();
 			}
 		}
-	},
-	"CheckRegistrationStatus=RS"
-	);
+	});
 }
 
 //show and hide
-function showandhide(callback){
-	$("#idDeviceOwnerRegistration").hide();	
+function showandhide(callback){	
+	$("#idDeviceOwnerRegistration div.panel-body").hide();
+	$("#reg_form_owner_start").hide();
 
 	if (callback){
 		callback();
 	}
 }
 
-// load functions ad webpage opening
+// load functions at webpage opening
 function startatLoad(){
 showandhide(function(){
 	loadNavbar(function(){
+		//Show loader
+		$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
 		checkRegistrationStatus(function(){ 
-			if(ownerRegisterStatus_check[0] != null){
-			if ((ownerRegisterStatus_check[0] == 1) && (ownerRegisterStatus_check[1] == 1)){
-				$("#reg_owner_answer_header").html("<strong>Ihr Produkt ist registriert!</strong>");
-				$("#reg_owner_answer_p").html("Dieses Produkt ist registriert für: <strong>"+ownerRegisterStatus_check[4]+" "+ownerRegisterStatus_check[5]+" "+ownerRegisterStatus_check[6]+"</strong><br>");	
-				$("#reg_owner_email_p").html("Benutzer Name: <strong>"+ownerRegisterStatus_check[7]+"</strong><br>");
-				$("#reg_owner_username_p").html("Registrierte e-mail Adresse: <strong>"+ownerRegisterStatus_check[3]+"</strong><br>");
-				$("#reg_owner_answer_positiv").show();
-				$("#idDeviceOwnerRegistration").hide();
-			} else if ((ownerRegisterStatus_check[0] == 1) && (ownerRegisterStatus_check[1] == -1)){
-				$("#reg_owner_answer_header").html("<strong>Registrierungs - Verifizierung ausstehend!</strong>");
-				$("#reg_owner_answer_positiv").show();
-				$("#idDeviceOwnerRegistration").hide();
-			}  
-			}else	{
+			//Remove loader
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			if((DataStatus.registrationstatus == 1) && (DataStatus.productexist == 1)){
+				if ((DataStatus.registrationstatus == 1) && (DataStatus.accountstatus == 1)){
+					$("#reg_owner_answer_header").html("<strong>Ihr Produkt ist registriert!</strong>");
+					$("#reg_owner_answer_p").html("Dieses Produkt ist registriert für: <strong>"+ownerRegisterStatus_check[4]+" "+ownerRegisterStatus_check[5]+" "+ownerRegisterStatus_check[6]+"</strong><br>");	
+					$("#reg_owner_email_p").html("Benutzer Name: <strong>"+ownerRegisterStatus_check[7]+"</strong><br>");
+					$("#reg_owner_username_p").html("Registrierte e-mail Adresse: <strong>"+ownerRegisterStatus_check[3]+"</strong><br>");
+					$("#reg_owner_answer_positiv").show();
+					$("#idDeviceOwnerRegistration div.panel").show();
+				}
+				else if ((DataStatus.registrationstatus == 1) && (DataStatus.accountstatus == -1)){
+					$("<div id=\"reverification\"><h3 style=\"color:red;\"><strong>Benutzer - Verifizierung ausstehend!</strong></h3>"+
+					"<p><strong>Bitte schließen Sie die Account Registrierung mit der e-Mail Verifizierung ab!</strong></p>"+
+					"<br>"+
+					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
+					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
+					"<p> Benuztername: <strong>"+DataStatus.userID+"</strong></p>"+
+					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
+					"<br>"+
+					"<p>Es ist nur noch ein Schritt zur Freischaltung Ihres Accounts notwendig.</p>"+
+					"<p>Über den Butten <strong>\"e-Mail Verifizierung\"</strong> können Sie Ihren Account aktivieren.</p><br>"+
+					"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"startNewAccountVerification()\" value=\"e-Mail Verifizierung\" >"+
+					"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+					$("#idDeviceOwnerRegistration div.panel-body").show();
+				}  
+			}else{
 				emptyinputfields(function(){
 					$("#reg_form_owner").show();
 					$("#SubmitProductReg").show();
