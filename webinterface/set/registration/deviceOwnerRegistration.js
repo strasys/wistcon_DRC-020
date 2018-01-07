@@ -611,6 +611,7 @@ showandhide(function(){
 					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
 					"<p> Benuztername: <strong>"+DataStatus.userID+"</strong></p>"+
 					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
+					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
 					"<br>"+
 					"<p>Es ist nur noch ein Schritt zur Freischaltung Ihres Accounts notwendig.</p>"+
 					"<p>Über den Butten <strong>\"e-Mail Verifizierung\"</strong> können Sie Ihren Account aktivieren.</p><br>"+

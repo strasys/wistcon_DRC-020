@@ -40,7 +40,7 @@ function DatabaseRegistrationStatus_return($return){
 
 	$returnData = explode("&", $return);
 	$returnDataValues = array();
-	for ($i=0;$i<8;$i++){
+	for ($i=0;$i<9;$i++){
 		$temp = explode(":", $returnData[$i]);
 		$returnDataValues[$i] = $temp[1];
 	}
@@ -53,7 +53,8 @@ function DatabaseRegistrationStatus_return($return){
 		'gender' => $returnDataValues[3],
 		'firstname' => $returnDataValues[4],
 		'familyname' => $returnDataValues[5],
-		'userID' => $returnDataValues[2]
+		'userID' => $returnDataValues[2],
+		'productname' => $returnDataValues[8]
 	);
 
 	echo json_encode($returnDataFinal);
