@@ -29,6 +29,15 @@
 			<div class="panel-body">
 				<!-- Start Owner Registration Product not registered --!>
 				<div id = "reg_form_owner_start" class="row">
+					<div class="row">
+						<div class="col-xs-0 col-sm-1 col-md-1"></div>
+						<div class="col-xs-12 col-sm-10 col-md-10">
+							<h3 style="color:orange; text-align: center;"><strong>Produktregistrierung mit bestehendem<br>wistcon Cloud Account</strong></h3>
+							<br>
+						</div>
+						<div class="col-xs-0 col-sm-1 col-md-1"></div>
+					</div>
+					<div class=row>
 					<div class="col-xs-0 col-sm-3 col-md-3"></div>
 					<div class="col-xs-12 col-sm-6 col-md-6">
 						<div id="div-login-msg-customer" class="login-msg">
@@ -36,19 +45,24 @@
                                 			<span id="text-login-msg">Eingabe Benutzernamen und Passwort</span>
 			   			</div>
 						<br>
-			    			<input id="login_username" class="form-control" type="text" placeholder="Benutzername" required autocomplete="on">
+			    			<input id="login_username" class="form-control" type="text" placeholder="Benutzername wistcon Cloud" required autocomplete="on">
 						<br>
-						<input id="login_password" class="form-control" type="password" placeholder="Passwort" required>
+						<input id="login_password" class="form-control" type="password" placeholder="Passwort wistcon Cloud" required>
 						<br>
       						<div>
-                                		<button id="login_button_submit_customer" type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
-					</div>	
+						<button id="login_button_submit_customer" type="submit" class="btn btn-primary btn-lg btn-block">Produkt registrieren</button>	
+						<br>
+						<a href="#">Registrierung Produkt und wistcon Cloud Account</a>
+					</div>
+					
 					<div class="col-xs-0 col-sm-3 col-md-3"></div>
+					</div>
+				</div>
 				</div>	
 				<!-- End Owner Registration Product not registered --!>
 	
 				<!-- Start Owner Registration form -->
-				<div id = "reg_form_owner" class="row">
+				<div id = "reg_form_owner_register" class="row">
 					<div class="col-xs-12 form-group">			
  						<label class="radio-inline">
 							<input type="radio" id="radioMR" name="optradio" value="Herr">Herr
@@ -119,39 +133,13 @@
 							<span id = "password2_span"class=""></span>
 						</div>
 					</div>
-
-				</div>
-				<!-- End of Owner Registration form -->
-
-				<!-- Start of Owner Registration Answer positiv-->
-				<div id = "reg_owner_answer_positiv" class="row">
-					<div class="col-xs-12">
-						<h2 id="reg_owner_answer_header"></h2>
-					</div>
-					<div class="col-xs-12">
-						<p id="reg_owner_answer_p"></p>
-					</div>
-					<div class = "col-xs-12">
-						<p id="reg_owner_email_p"></p>
-					</div>
-					<div class = "col-xs-12">
-						<p id="reg_owner_username_p"></p>
-					</div>
-					<div id="veri_code_div" class = "col-xs-12">
-						<label for="veri_code">Tragen Sie hier Ihren via e-mail erhaltenen Bestätigungs - Code ein</label>
-						<div class="input-group">
-						<span class="input-group-addon">e-mail Bestätigungs-Code</span>
-						<input type="text" class="form-control" id="very_code" maxlength="5">
-						</div>
+					<!-- Button -->
+					<div class ="col-xs-4">
+						<br>
+						<input class="btn btn-info" type="button" id="SubmitProductReg" value="" >
 					</div>
 				</div>
-				<!-- End of Owner Registration Answer positiv -->
-
-				<!-- Button -->
-				<div class ="col-xs-4">
-					<br>
-					<input class="btn btn-info" type="button" id="SubmitProductReg" value="" >
-				</div>
+				<!-- End of Owner Registration form -->		
 			</div>
   		</div>
 	</div>	

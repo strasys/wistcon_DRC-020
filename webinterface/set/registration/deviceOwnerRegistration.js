@@ -141,54 +141,6 @@ function handler_submit_very_code(veryCode, email, username, callback){
 	);
 }
 
-function submit_very_code(){
-	var veryCode = document.getElementById("very_code").value;
-
-	handler_submit_very_code(veryCode, email, username, function(){
-		if ((ownerRegisterStatus_very[0] == 1) && (ownerRegisterStatus_very[1] == 1)){
-			$("#veri_code_div").hide();
-			$("#SubmitProductReg").hide();
-			$("#veriCode").val('');
-			$("#reg_owner_answer_header").addClass("text-sucess");
-			$("#reg_owner_answer_header").html("<strong>Erfolgreich Registriert</strong>");
-			$("#reg_owner_answer_p").html("Sie können sich nun über <a href=\"http://www.wistcon.de\">www.wistcon.de</a> anmelden	und erweiterte Funktionen für ihr Produkt nutzen.<br>Eine wesentliche Funktion ist der Zugriff auf Ihr Produkt von außerhalb Ihres Heimnetzwerks.<br><strong>Achtung:<strong> Hierfür müssen Sie Ihre DNS Funktion auf dem Gerät aktivieren.");
-			$("#reg_owner_email_p").html("Registrierungs e-mail: <strong>"+email+"</strong><br>");
-			$("#reg_owner_username_p").html("Folgender Benutzername wurde Ihnen zugewiesen.<br>Benutzername: <strong>"+username+"</strong>");
-		} else if ((ownerRegisterStatus_very[0] == -1) && (ownerRegisterStatus_very[1] == 1))
-       			{
-			$("#veriCode").val('');
-			$("#veri_code_div").show();
-			$("#SubmitProductReg").hide();
-			$("#reg_owner_answer_header").addClass("text-danger");
-			$("#reg_owner_answer_header").html("<strong>Verifizierung Fehlgeschlagen!</strong>");
-			$("#reg_owner_answer_p").html("Der Registrierungs Server ist nicht bereit. Bitte versuchen Sie es zu einem späteren Zeitpunkt nochmals!");
-			//Button configuration 	
-			var buttonProperties = document.getElementById("SubmitProductReg");
-			buttonProperties.value = "Neuen Verifizierungscode anfordern";
-			buttonProperties.onclick = function () {getNewVeryCode()};
-			$("#SubmitProductReg").prop('disabled', true);
-			$("#SubmitProductReg").show();
-
-		} else if ((ownerRegisterStatus_very[0] == 0) && (ownerRegisterStatus_very[1] == -1))
-			{
-			$("#veriCode").val('');
-			$("#veri_code_div").show();
-			$("#SubmitProductReg").hide();
-			$("#reg_owner_answer_header").addClass("text-danger");
-			$("#reg_owner_answer_header").html("<strong>Verifizierung Fehlgeschlagen!</strong>");
-			$("#reg_owner_answer_p").html("Der Registrierungs Server ist nicht bereit. Bitte versuchen Sie es zu einem späteren Zeitpunkt nochmals!");
-			//Button configuration 	
-			var buttonProperties = document.getElementById("SubmitProductReg");
-			buttonProperties.value = "Neuen Verifizierungscode anfordern";
-			buttonProperties.onclick = function () {getNewVeryCode()};
-			$("#SubmitProductReg").prop('disabled', true);
-			$("#SubmitProductReg").show();
-			}
-
-		$("#reg_owner_answer_positiv").show();
-	});
-}
-
 function startNewAccountVerification(){
 	$("#reverification").remove();
 	$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
@@ -227,6 +179,22 @@ function startNewAccountVerification(){
 		}
 
 	});
+}
+
+function startRegistrationwithoutAccount(callback){
+	emptyinputfields(function(){
+		$("#reg_form_owner_start").hide();
+		$("#reg_form_owner_register").show();
+		$("#SubmitProductReg").show();
+		setSelectMenuesValues(function(){
+		
+		});
+	});
+
+
+	if(callback){
+		callback();
+	}	
 }
 
 function setSelectMenuesValues(){
@@ -585,6 +553,11 @@ function showandhide(callback){
 	}
 }
 
+function relocation_wistcon_cloud(url){
+	var win = window.open(url, '_blank');
+	win.focus();
+}
+
 // load functions at webpage opening
 function startatLoad(){
 showandhide(function(){
@@ -595,21 +568,25 @@ showandhide(function(){
 			//Remove loader
 			$("#idDeviceOwnerRegistration div.loader").remove();
 			if((DataStatus.registrationstatus == 1) && (DataStatus.productexist == 1)){
-				if ((DataStatus.registrationstatus == 1) && (DataStatus.accountstatus == 1)){
-					$("#reg_owner_answer_header").html("<strong>Ihr Produkt ist registriert!</strong>");
-					$("#reg_owner_answer_p").html("Dieses Produkt ist registriert für: <strong>"+ownerRegisterStatus_check[4]+" "+ownerRegisterStatus_check[5]+" "+ownerRegisterStatus_check[6]+"</strong><br>");	
-					$("#reg_owner_email_p").html("Benutzer Name: <strong>"+ownerRegisterStatus_check[7]+"</strong><br>");
-					$("#reg_owner_username_p").html("Registrierte e-mail Adresse: <strong>"+ownerRegisterStatus_check[3]+"</strong><br>");
-					$("#reg_owner_answer_positiv").show();
-					$("#idDeviceOwnerRegistration div.panel").show();
+				if (DataStatus.accountstatus == 1){
+					$("<div id=\"registered\"><h3 style=\"color:green;\"><strong>Produkt ist registriert!</strong></h3>"+
+					"<br>"+
+					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
+					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
+					"<p> Benutzername: <strong>"+DataStatus.userID+"</strong></p>"+
+					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
+					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
+					"<br>"+
+					"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+					$("#idDeviceOwnerRegistration div.panel-body").show();
 				}
-				else if ((DataStatus.registrationstatus == 1) && (DataStatus.accountstatus == -1)){
+				else if (DataStatus.accountstatus == -1){
 					$("<div id=\"reverification\"><h3 style=\"color:red;\"><strong>Benutzer - Verifizierung ausstehend!</strong></h3>"+
 					"<p><strong>Bitte schließen Sie die Account Registrierung mit der e-Mail Verifizierung ab!</strong></p>"+
 					"<br>"+
 					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
 					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
-					"<p> Benuztername: <strong>"+DataStatus.userID+"</strong></p>"+
+					"<p> Benutzername: <strong>"+DataStatus.userID+"</strong></p>"+
 					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
 					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
 					"<br>"+
@@ -618,10 +595,35 @@ showandhide(function(){
 					"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"startNewAccountVerification()\" value=\"e-Mail Verifizierung\" >"+
 					"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
 					$("#idDeviceOwnerRegistration div.panel-body").show();
-				}  
-			}else{
+				}
+			      	else if (DataStatus.accountstatus == 0){
+					$("<div id=\"reverification\"><h3 style=\"color:orange;\"><strong>Produkt registriert - Zugang zurückgesetzt!</strong></h3>"+
+					"<p><strong>Ihr Passwort wurde zurückgesetzt!<br>"+
+				        "Bitte reaktivieren Sie Ihr Passwort über die e-mail Freigabe!</strong></p>"+
+				        "<p>Hirzu muss der Eigentümer auf der <strong>\"wistcon\"</strong> Webseite beim Login die"+
+				        "<strong>\"Passwort - vergessen\"</strong> Routine starten!</p>"+
+					"<br>"+
+					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
+					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
+					"<p> Benutzername: <strong>"+DataStatus.userID+"</strong></p>"+
+					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
+					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
+					"<br>"+
+					"<p>Über den Button <strong>\"Weiterleitung - wistcon Cloud\"</strong> gelangen Sie direkt auf die wistcon Webseite</p><br>"+
+					"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"relocation_wistcon_cloud('https://www.wistcon.at')\" value=\"Weiterleitung - wistcon Cloud\" >"+
+					"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+					$("#idDeviceOwnerRegistration div.panel-body").show();
+				}	       
+			}
+			else if ((DataStatus.registrationstatus == -1) && (DataStatus.productexist == 1)){
+				$("#reg_form_owner_start").show();
+				$("#reg_form_owner_register").hide();
+				$("#idDeviceOwnerRegistration div.panel-body").show();
+			}
+			
+			else{
 				emptyinputfields(function(){
-					$("#reg_form_owner").show();
+					$("#reg_form_owner_start").show();
 					$("#SubmitProductReg").show();
 					$("#idDeviceOwnerRegistration").show();
 					setSelectMenuesValues(function(){
@@ -669,4 +671,8 @@ function loadNavbar(callback1){
 		}
 	});
 }
+
+$("#reg_form_owner_start a").on('click', function(){
+	startRegistrationwithoutAccount();
+});
 
