@@ -40,38 +40,38 @@ function getloginstatus(callback1){
 		
 // Register owner user at wistcon - server and start verification process
 function RegisterOwnerUser(gender, firstName_str, FamilyName_str, street_str, number_str, PLZ_str, City_str, Country_str, email_str, password_str, callback3){	
-	getData("post","deviceOwnerRegistration.php",function()
+	getData("post","newdeviceOwnerRegistration.php",function()
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
 			var getRegisterData = JSON.parse(xhttp.responseText);
-			ownerRegisterStatus = [
-						(getRegisterData.product_registered),
-						(getRegisterData.product_registerID_exist),
-						(getRegisterData.customer_register_email),
-						(getRegisterData.customer_exists_flag),
-						(getRegisterData.database_write),
-						(getRegisterData.write_ID_customer),
-						(getRegisterData.send_email_verification),
-						(getRegisterData.email),
-						(getRegisterData.username)
-						];
+			/*
+			getRegisterData:
+				'product_registered'
+				'product_registerID_exist'
+				'accountstatus'
+				'verykeysend'
+				'database_write'
+				'email'
+				'gender'
+				'firstname'
+				'familyname'
+			*/
 			if(callback3){
-				callback3();
+				callback3(getRegisterData);
 			}
 		}
 	},
 	"gender="+gender+
 	"&firstName="+firstName_str+
-	"&FamilyName="+FamilyName_str+
+	"&familyName="+FamilyName_str+
 	"&street="+street_str+
 	"&number="+number_str+
 	"&PLZ="+PLZ_str+
 	"&City="+City_str+
 	"&Country="+Country_str+
 	"&email="+email_str+
-	"&password="+password_str+
-	"&OwnerRegistration=w"
+	"&password="+password_str
 	);
 }
 
@@ -116,31 +116,6 @@ function requestNewemailVerificationCode(callback){
 	},"progkey=reqVery");
 }
 
-// Submit verification code
-function handler_submit_very_code(veryCode, email, username, callback){	
-	getData("post","deviceOwnerRegistrationVerification.php",function()
-	{
-		if (xhttp.readyState==4 && xhttp.status==200)
-		{
-			var getVeryData = JSON.parse(xhttp.responseText);
-			ownerRegisterStatus_very = [
-						(getVeryData.writeVeryData),
-						(getVeryData.veryCodeVerification),
-						(getVeryData.email),
-						(getVeryData.username)
-						];
-			if(callback){
-				callback();
-			}
-		}
-	},
-	"veryCode="+veryCode+
-	"&email="+email+
-	"&username="+username+
-	"&CheckVeryCode=c"
-	);
-}
-
 function startNewAccountVerification(){
 	$("#reverification").remove();
 	$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
@@ -181,7 +156,7 @@ function startNewAccountVerification(){
 	});
 }
 
-function startRegistrationwithoutAccount(callback){
+function OpenWindowRegistrationwithoutAccount(){
 	emptyinputfields(function(){
 		$("#reg_form_owner_start").hide();
 		$("#reg_form_owner_register").show();
@@ -189,12 +164,7 @@ function startRegistrationwithoutAccount(callback){
 		setSelectMenuesValues(function(){
 		
 		});
-	});
-
-
-	if(callback){
-		callback();
-	}	
+	});	
 }
 
 function setSelectMenuesValues(){
@@ -205,11 +175,9 @@ function setSelectMenuesValues(){
 		option.text = country_list[i];
 		document.getElementById("Country").options.add(option);
 	}
-	//Button configuration 	
-	var buttonProperties = document.getElementById("SubmitProductReg");
-	buttonProperties.value = "Daten Senden";
-	buttonProperties.onclick = function () {checkProductRegistrationEntry()};
-	$("#SubmitProductReg").prop('disabled', false);
+	$("<div class='col-xs-4'><br>"+
+	"<input class='btn btn-info' type='button' id='SubmitNewProductReg' value='Daten Senden'"+
+	"</div>").appendTo("#reg_form_owner_register");
 }
 
 function emptyinputfields(callback){
@@ -305,6 +273,59 @@ function showpassword_text(){
 		document.getElementById("password1").type = "password";
 	}
 }
+
+//Registration information => after pressing the submit button
+$("#SubmitNewProductReg").on('click', function(){
+	checkProductRegistrationEntry(function(error_flag_registration, gender, firstName_str, FamilyName_str, street_str, number_str, PLZ_str, City_str, Country_str, email_str, password1_str){
+		if (error_flag_registration == 0){
+			$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
+			RegisterOwnerUser(gender, firstName_str, FamilyName_str, street_str, number_str, PLZ_str, City_str, Country_str, email_str, password1_str, function(getRegisterData){
+			
+			$("#reg_form_owner_start").hide();
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			//check if an error occured
+			/*	'product_registered' => data will not be evaluated again
+				'product_registerID_exist' => data will not be evaluated again
+				'verykeysend' => needs to be checked
+				'database_write' => needs to be checked
+			*/
+
+			if (getRegisterData.database_write == -1){
+				$("<div id=\"errorRegistration\"><h3 style=\"color:red;\"><strong>Es ist ein Fehler aufgetreten!</strong></h3>"+
+				"<p><strong>Beim Anlegen Ihrer Benutzerdaten ist ein Fehler aufgetreten.<br>"+
+				"Starten Sie die Registrierung nach einem erneuten Logout / Login erneurt!</strong></p>"+
+				"<br>"+
+				"<p><strong>Trit das Problem erneut auf kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
+				"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+			}	
+			else if (getRegisterData.verykeysend == -1){
+				$("<div id=\"errorRegistration\"><h3 style=\"color:red;\"><strong>Es ist ein Fehler aufgetreten!</strong></h3>"+
+				"<p><strong>Beim Versenden der e-Mail Bestätigung ist ein Fehler aufgetreten!<br>"+
+				"Starten Sie die Registrierung nach einem erneuten Logout / Login erneut!</strong></p>"+
+				"<br>"+
+				"<p><strong>Trit das Problem weiterhin auf, kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
+				"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+			}
+			else if (getRegisterData.accountstatus == -1){
+				$("<div id=\"successRegistration\"><h3 style=\"color:green;\"><strong>Verifizierungs e-mail erfolgreich versandt!</strong></h3>"+
+				"<p><strong>Wir haben Ihnen eine Account Aktivierungs e-mail an <strong>"+getRegisterData.email+"</strong> gesendet.<br>"+
+				getRegisterData.gender+" "+getRegisterData.firstname+" "+getRegisterData.familyname+",<br>"+
+				"mit der Bestätigung Ihrer E-Mail können Sie die Cloud Funktionen Ihres wistcon Geräts nutzen.<br>"+
+				"Aus Sicherheitsgründen, bitten wir Sie die Bestätigung innerhalb von 24h durchzuführen.</p>"+
+				"<br>"+
+				"<p>Achtung! Es kommt vor, dass das e-mail in Ihrem Spam Ordner landedt!</p>"+
+				"<p>Haben Sie das e-mail versehentlich gelöscht, können Sie über den Button \"e-Mail Verifizierung\" ein Neues Aktivierungs e-mail anfordern.</p>"+
+				"<br>"+
+				"<p>Besten Dank!<br><br>"+
+				"Ihr wistcon Team</p>"+	
+				"<br>"+
+				"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"startNewAccountVerification()\" value=\"e-Mail Verifizierung\">"+
+				"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+			}
+		});
+		}
+	});
+});
 
 function checkProductRegistrationEntry(){
 	var error_flag_registration = 0;
@@ -465,69 +486,11 @@ function checkProductRegistrationEntry(){
 		error_flag_registration = -1;
 	}
 
-
-
-	if (error_flag_registration == 0){
-		RegisterOwnerUser(gender, firstName_str.value, FamilyName_str.value, street_str.value, number_str.value, PLZ_str.value, City_str.value, Country_str.value, email_str.value, password1_str.value, function(){
-
-			$("#reg_form_owner").hide();
-			$("#veri_code_div").hide();
-
-			if (ownerRegisterStatus[0] == 1){
-				//Das Produkt wurde bereits registriert	
-				$("#reg_owner_answer_header").addClass("text-danger");
-				$("#reg_owner_answer_header").html("<strong>Produkt bereits registriert!</strong>");
-				$("#reg_owner_answer_p").html("Ihr Produkt wurde bereits von einem anderen Nutzer registriert.<br> Bitte wenden Sie sich an den Hersteller!");
-				$("#SubmitProductReg").hide();
-
-			} else if (ownerRegisterStatus[1] == (-1)){
-				//Das Produkt hat eine ungültige Produkt-ID
-				$("#reg_owner_answer_header").addClass("text-danger");
-				$("#reg_owner_answer_header").html("<strong>Falsche Seriennummer!</strong>");
-				$("#reg_owner_answer_p").html("Die Seriennummer stimmt nicht überein. Bitte wenden Sie sich an den Hersteller!");
-				$("#SubmitProductReg").hide();
-
-			} else if (ownerRegisterStatus[3] == 1){
-				//Sie sind mit dieser e-mail Adresse bereits registriert.
-				//Um ein weiteres Produkt anzumelden Benutzen Sie die Option
-				//weiteres Produkt registrieren.
-				$("#reg_owner_answer_header").addClass("text-warning");
-				$("#reg_owner_answer_header").html("<strong>Bereits Registriert</strong>");
-				$("#reg_owner_answer_p").html("Es ist bereits ein Benutzer mit der von Ihnen angegenben<br><strong>e-mail Adresse: "+ownerRegisterStatus[7]+"</strong><br>registriert.<br>Wollen Sie ein weiteres WISTCON Gerät unter Ihrem Benutzer Account registrieren, klicken Sie den untenstehenden \"Button\"!");
-				$("#SubmitProductReg").prop('value', 'Produkt Anmeldung für bereits registrierte Kunden');
-				$("#SubmitProductReg").prop('disabled', true);
-
-			} else if ((ownerRegisterStatus[4] == 1) && (ownerRegisterStatus[6] == 1)){
-				//Das ist der Standardausgang der Produktregistrierung:
-				//Der Kunde wird über den erstellten user Namen und die 
-				//e-mail Bestätigung informiert.
-				//=> Bestätigung innerhalb von 24h
-				//Nächster Schritt Eingabe Passwort
-				//Information über Login
-				$("#reg_owner_answer_header").addClass("text-success");
-				$("#reg_owner_answer_header").html("<strong>Nur noch ein Schritt zur erfolgreichen Registrierung</strong>");
-				$("#reg_owner_answer_p").html("Wir haben Ihnen eine Bestätigungs<br>e-mail an: <strong>"+ownerRegisterStatus[7]+"</strong><br> gesendet.<br>Bitte tragen Sie den 5 - stelligen Code zur Bestätigung der Registrierung in das untere Feld ein<br> klicken Sie \"Registrierung abschliessen\"");
-			//	$("#reg_owner_email_p").html("<br><strong>Registrierte e-mail: "+ownerRegisterStatus[7]+"<strong>");
-				//	$("#reg_owner_username_p").html("<strong>Benutzername: "+ownerRegisterStatus[8]+"<strong>");
-				//empty input field
-				$("#very_code").val("");
-				$("#SubmitProductReg").prop('value', 'Registrierung abschliessen');
-				$("#SubmitProductReg").prop('disabled', true);
-				//set global email and username variable
-				email = ownerRegisterStatus[7];
-				username = ownerRegisterStatus[8];
-				//Button function
-				//Button configuration 	
-				var buttonProperties = document.getElementById("SubmitProductReg");
-				buttonProperties.onclick = function () {submit_very_code()};
-				$("#SubmitProductReg").prop('disabled', false);
-				$("#veri_code_div").show();
-			}
-
-			$("#reg_owner_answer_positiv").show(); 
-		});
+	if (callback){
+		callback(error_flag_registration, gender, firstName_str.value, FamilyName_str.value, street_str.value, number_str.value, PLZ_str.value, City_str.value, Country_str.value, email_str.value, password1_str.value);
 	}
 }
+
 
 // Submit data to server => checkRegistrationStatus()
 function checkRegistrationStatus(callback){
@@ -535,9 +498,9 @@ function checkRegistrationStatus(callback){
 	{
 		if (xhttp.readyState==4 && xhttp.status==200)
 		{
-			DataStatus = JSON.parse(xhttp.responseText);		
+			var DataStatus = JSON.parse(xhttp.responseText);		
 			if(callback){
-				callback();
+				callback(DataStatus);
 			}
 		}
 	});
@@ -564,7 +527,7 @@ showandhide(function(){
 	loadNavbar(function(){
 		//Show loader
 		$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
-		checkRegistrationStatus(function(){ 
+		checkRegistrationStatus(function(DataStatus){ 
 			//Remove loader
 			$("#idDeviceOwnerRegistration div.loader").remove();
 			if((DataStatus.registrationstatus == 1) && (DataStatus.productexist == 1)){
@@ -673,6 +636,6 @@ function loadNavbar(callback1){
 }
 
 $("#reg_form_owner_start a").on('click', function(){
-	startRegistrationwithoutAccount();
+	OpenWindowRegistrationwithoutAccount();
 });
 
