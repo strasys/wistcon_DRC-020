@@ -17,15 +17,15 @@ unset($arr);
 	$data = array(
 		'deviceID' => $deviceIDval,
 		'gender' => $_POST['gender'],
-		'firstName' => $_POST['firstName'],
-		'FamilyName' => $_POST['familyName'],
+		'firstname' => $_POST['firstName'],
+		'familyname' => $_POST['familyName'],
 		'street' => $_POST['street'],
 		'number' => $_POST['number'],
 		'PLZ' => $_POST['PLZ'],
-		'City' => $_POST['City'],
-		'Country' => $_POST['Country'],
+		'city' => $_POST['City'],
+		'country' => $_POST['Country'],
 		'email' => $_POST['email'],
-		'password' => $_POST['password'],
+		'password' => $_POST['password']
 		);
 	$data_string="";
 	foreach($data as $key=>$value) 
@@ -44,9 +44,8 @@ unset($arr);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 	$return = curl_exec($ch);
 	curl_close($ch);
-
 	DatabaseRegistration_return($return);
-}
+	
 
 function DatabaseRegistration_return($return){
 

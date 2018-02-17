@@ -1,4 +1,4 @@
-/**
+/*
  * Program to Register the product for a user
  *   
  * 01.01.2018
@@ -21,21 +21,21 @@ function getData(setget, url, cfunc, senddata){
 
 //Check if session is activ
 function getloginstatus(callback1){
-		getData("post","../../userLogStatus.php",function()
+	getData("post","../../userLogStatus.php",function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
 		{
-			if (xhttp.readyState==4 && xhttp.status==200)
-			{
-			var getLogData = JSON.parse(xhttp.responseText); 
-			
-			LogData = [
-					(getLogData.loginstatus),
-					(getLogData.adminstatus)
-			                          ];
-				if (callback1){
+		var getLogData = JSON.parse(xhttp.responseText); 
+		
+		LogData = [
+				(getLogData.loginstatus),
+				(getLogData.adminstatus)
+		 	  ];
+			if (callback1){
 				callback1();
-				}
 			}
-		});		
+		}
+	});		
 }
 		
 // Register owner user at wistcon - server and start verification process
@@ -132,7 +132,7 @@ function startNewAccountVerification(){
 		else if ((verykeysend == -1) && (email != "")){
 			$("#idDeviceOwnerRegistration div.loader").remove();
 			$("<div id=\"errorreverificaton\"><h3 style=\"color:red;\"><strong>Es ist ein Fehler aufgetreten!</strong></h3>"+
-			"<p><strong>Beim Versand des Aktivierungs e-mails ist ein Fehler aufgetreten!<br>"+
+			"<p><strong>Beim Versand des Aktivierungs E-Mails ist ein Fehler aufgetreten!<br>"+
 			"Bitte starten Sie die Verifizierung erneut!</strong></p>"+
 			"<br>"+
 			"<p><strong>Tritt das Problem erneut auf kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
@@ -144,9 +144,9 @@ function startNewAccountVerification(){
 			$("#idDeviceOwnerRegistration div.loader").remove();
 			$("<div id=\"successverification\"><h3 style=\"color:green;\"><strong>Verifizierungs e-mail erfolgreich versandt!</strong></h3>"+
 			"<p><strong>Wir haben Ihnen eine Account Aktivierungs e-mail an <strong>"+email+"</strong> gesendet.<br>"+
-			"Bitte bestätigen Sie diesen über den im e-mail angehängten link innerhalb von 24h!</strong></p>"+
+			"Bitte bestätigen Sie diesen über den im E-Mail angehängten link innerhalb von 24h!</strong></p>"+
 			"<br>"+
-			"<p>Achtung! Es kommt vor, dass das e-mail in Ihrem Spam Ordner landedt!</p>"+
+			"<p>Achtung! Es kommt vor, dass das E-Mail in Ihrem Spam Ordner landedt!</p>"+
 			"<p>Haben Sie das e-mail versehentlich gelöscht, können Sie über den Button \"e-Mail Verifizierung\" ein Neues Aktivierungs e-mail anfordern.</p>"+
 			"<br>"+	
 			"<input class=\"btn btn-success btn-block\" type=\"button\" onclick=\"startNewAccountVerification()\" value=\"e-Mail Verifizierung\">"+
@@ -167,6 +167,7 @@ function OpenWindowRegistrationwithoutAccount(){
 	});	
 }
 
+
 function setSelectMenuesValues(){
 
 	var country_list = new Array("Deutschland", "Österreich", "Schweiz");
@@ -176,7 +177,7 @@ function setSelectMenuesValues(){
 		document.getElementById("Country").options.add(option);
 	}
 	$("<div class='col-xs-4'><br>"+
-	"<input class='btn btn-info' type='button' id='SubmitNewProductReg' value='Daten Senden'"+
+	"<input class='btn btn-info' type='button' onclick='SubmitNewProductReg()' value='Daten Senden'>"+
 	"</div>").appendTo("#reg_form_owner_register");
 }
 
@@ -275,9 +276,11 @@ function showpassword_text(){
 }
 
 //Registration information => after pressing the submit button
-$("#SubmitNewProductReg").on('click', function(){
+function SubmitNewProductReg()
+{
 	checkProductRegistrationEntry(function(error_flag_registration, gender, firstName_str, FamilyName_str, street_str, number_str, PLZ_str, City_str, Country_str, email_str, password1_str){
 		if (error_flag_registration == 0){
+			$("#reg_form_owner_register").remove();
 			$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
 			RegisterOwnerUser(gender, firstName_str, FamilyName_str, street_str, number_str, PLZ_str, City_str, Country_str, email_str, password1_str, function(getRegisterData){
 			
@@ -293,28 +296,28 @@ $("#SubmitNewProductReg").on('click', function(){
 			if (getRegisterData.database_write == -1){
 				$("<div id=\"errorRegistration\"><h3 style=\"color:red;\"><strong>Es ist ein Fehler aufgetreten!</strong></h3>"+
 				"<p><strong>Beim Anlegen Ihrer Benutzerdaten ist ein Fehler aufgetreten.<br>"+
-				"Starten Sie die Registrierung nach einem erneuten Logout / Login erneurt!</strong></p>"+
+				"Starten Sie die Registrierung zu einem späteren Zeitpunkt erneurt!</strong></p>"+
 				"<br>"+
-				"<p><strong>Trit das Problem erneut auf kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
+				"<p><strong>Trit das Problem erneut auf, kontaktieren Sie bitte Ihr wistcon Team!</strong></p>"+
 				"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
 			}	
 			else if (getRegisterData.verykeysend == -1){
 				$("<div id=\"errorRegistration\"><h3 style=\"color:red;\"><strong>Es ist ein Fehler aufgetreten!</strong></h3>"+
-				"<p><strong>Beim Versenden der e-Mail Bestätigung ist ein Fehler aufgetreten!<br>"+
-				"Starten Sie die Registrierung nach einem erneuten Logout / Login erneut!</strong></p>"+
+				"<p><strong>Beim Versenden der E-Mail Bestätigung ist ein Fehler aufgetreten!<br>"+
+				"Starten Sie die Registrierung zu einem spätern Zeitpunkt erneut.</strong></p>"+
 				"<br>"+
-				"<p><strong>Trit das Problem weiterhin auf, kontaktieren Sie bitte Ihren Wistcon Service!</strong></p>"+
+				"<p><strong>Trit das Problem weiterhin auf, kontaktieren Sie bitte Ihr wistcon Team!</strong></p>"+
 				"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
 			}
 			else if (getRegisterData.accountstatus == -1){
 				$("<div id=\"successRegistration\"><h3 style=\"color:green;\"><strong>Verifizierungs e-mail erfolgreich versandt!</strong></h3>"+
-				"<p><strong>Wir haben Ihnen eine Account Aktivierungs e-mail an <strong>"+getRegisterData.email+"</strong> gesendet.<br>"+
+				"<p><strong>Wir haben Ihnen eine Account Aktivierungs E-Mail an <strong>"+getRegisterData.email+"</strong> gesendet.<br>"+
 				getRegisterData.gender+" "+getRegisterData.firstname+" "+getRegisterData.familyname+",<br>"+
-				"mit der Bestätigung Ihrer E-Mail können Sie die Cloud Funktionen Ihres wistcon Geräts nutzen.<br>"+
+				"mit der Bestätigung Ihrer E-Mail können Sie die Cloud Dienste von wistcon nutzen.<br>"+
 				"Aus Sicherheitsgründen, bitten wir Sie die Bestätigung innerhalb von 24h durchzuführen.</p>"+
 				"<br>"+
 				"<p>Achtung! Es kommt vor, dass das e-mail in Ihrem Spam Ordner landedt!</p>"+
-				"<p>Haben Sie das e-mail versehentlich gelöscht, können Sie über den Button \"e-Mail Verifizierung\" ein Neues Aktivierungs e-mail anfordern.</p>"+
+				"<p>Haben Sie das e-mail versehentlich gelöscht, können Sie über den Button \"e-Mail Verifizierung\" ein Neues Aktivierungs E-Mail anfordern.</p>"+
 				"<br>"+
 				"<p>Besten Dank!<br><br>"+
 				"Ihr wistcon Team</p>"+	
@@ -325,9 +328,9 @@ $("#SubmitNewProductReg").on('click', function(){
 		});
 		}
 	});
-});
+}
 
-function checkProductRegistrationEntry(){
+function checkProductRegistrationEntry(callback){
 	var error_flag_registration = 0;
 
 	//reset input "has-feedback" options
@@ -510,6 +513,7 @@ function checkRegistrationStatus(callback){
 function showandhide(callback){	
 	$("#idDeviceOwnerRegistration div.panel-body").hide();
 	$("#reg_form_owner_start").hide();
+	$("#reg_form_owner_register").hide();
 
 	if (callback){
 		callback();
@@ -534,11 +538,10 @@ showandhide(function(){
 				if (DataStatus.accountstatus == 1){
 					$("<div id=\"registered\"><h3 style=\"color:green;\"><strong>Produkt ist registriert!</strong></h3>"+
 					"<br>"+
-					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
-					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
-					"<p> Benutzername: <strong>"+DataStatus.userID+"</strong></p>"+
-					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
-					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
+					"<p><strong>Eigentümer: "+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
+					"<p><strong>wiscton Cloud Anmeldeinformationen:</strong></p>"+
+					"<p> e-Mail Adresse / Benutzername: <strong>"+DataStatus.email+"</strong></p>"+
+					"<p> Gerätename: <strong>"+DataStatus.productname+"</strong></p>"+
 					"<br>"+
 					"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
 					$("#idDeviceOwnerRegistration div.panel-body").show();
@@ -549,7 +552,6 @@ showandhide(function(){
 					"<br>"+
 					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
 					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
-					"<p> Benutzername: <strong>"+DataStatus.userID+"</strong></p>"+
 					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
 					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
 					"<br>"+
@@ -568,7 +570,6 @@ showandhide(function(){
 					"<br>"+
 					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
 					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
-					"<p> Benutzername: <strong>"+DataStatus.userID+"</strong></p>"+
 					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
 					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+
 					"<br>"+
