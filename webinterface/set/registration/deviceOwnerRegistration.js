@@ -75,6 +75,83 @@ function RegisterOwnerUser(gender, firstName_str, FamilyName_str, street_str, nu
 	);
 }
 
+//Register new device with existing wistcon cloud account
+function RegisterNewProduct_existingAccount(email, password, callback){
+	getData("post","newProductRegistration_client.php",function()
+	{
+		if (xhttp.readyState==4 && xhttp.status==200)
+		{
+			var getRegisterData = JSON.parse(xhttp.responseText);
+			/*
+			getRegisterData:
+				'product_registered'
+				'product_registerID_exist'
+				'accountlogin'
+				'accountstatus'
+				'database_write'
+				'email'
+				'gender'
+				'firstname'
+				'familyname'
+				'productname'
+			*/
+			if(callback){
+				callback(getRegisterData);
+			}
+		}
+	},
+	"email="+email+
+	"&password="+password
+	);
+}
+
+function startRegistration_existingAccount(){
+	var email = document.getElementById("login_username").value;
+	var password = document.getElementById("login_password").value;
+	$("#reg_form_owner_start").hide();
+	$("<div class=\"loader pos-rel\"></div>").appendTo("#idDeviceOwnerRegistration");
+	RegisterNewProduct_existingAccount(email, password, function(registerData){
+		if((registerData.product_registerID_exist == -1) || (registerData.product_registered == -1)){
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("<div id=\"fatalerror\"><h3 style=\"color:red;\"><strong>Schwerwiegender Fehler!</strong></h3>"+
+			"<p><strong>Die Registrierung ist fehlgeschlagen!<br>"+
+			"<br>"+
+			"<p><strong>Bitte wenden Sie sich an den wistcon Service!</strong></p>"+
+			"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");			
+		}
+		else if (registerData.accountlogin == -1) {
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("#login_username").val('');
+			$("#login_password").val('');
+			$("#reg_form_owner_start").show();
+			DisplayLoginInformation(-1);
+		}
+		else if (registerData.database_write == -1){
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("<div id=\"fatalerror\"><h3 style=\"color:red;\"><strong>Datenbank Schreibfehler!</strong></h3>"+
+			"<p><strong>Bei der Registrierung ist ein Fehler aufgetreten.!<br>"+
+			"Bitte starten Sie die Registrierung nach einem erneuten Logout / Login erneurt!</strong></p>"+
+			"<br>"+
+			"<p><strong>Tritt das Problem erneut auf, kontaktieren Sie bitte Ihren wistcon Service!</strong></p>"+
+			"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");		
+		}
+		else {
+			$("#idDeviceOwnerRegistration div.loader").remove();
+			$("<div id=\"successRegistration\"><h3 style=\"color:green;\"><strong>Produkt erfolgreich registriert!</strong></h3>"+
+			"<p><strong>Dieses Produkt wurde für folgenden Benutzer registriert:</strong></p>"+
+			"<p><strong>"+registerData.gender+" "+registerData.firstname+" "+registerData.familyname+"</strong></p>"+
+			"<p> e-Mail Adresse: <strong>"+registerData.email+"</strong></p>"+
+			"<p> Klarname Gerät: <strong>"+registerData.productname+"</strong></p>"+
+			"<br>"+
+			"<p>Sie können nun auch für dieses Gerät die wistcon Cloud Dienste nutzen!</p>"+
+			"<br>"+
+			"<p>Besten Dank!<br><br>"+
+			"Ihr wistcon Team</p>"+	
+			"</div>").appendTo("#idDeviceOwnerRegistration div.panel-body");
+		}	
+	});
+}
+
 //Alert information
 function DisplayLoginInformation(statusCustomerLogin, callback3){
 	$(window).scrollTop(0);
@@ -99,6 +176,8 @@ function DisplayLoginInformation(statusCustomerLogin, callback3){
 		callback3();
 	}	
  }
+
+//
 
 // request new e-mail verification code
 function requestNewemailVerificationCode(callback){
@@ -550,7 +629,7 @@ showandhide(function(){
 					$("<div id=\"reverification\"><h3 style=\"color:red;\"><strong>Benutzer - Verifizierung ausstehend!</strong></h3>"+
 					"<p><strong>Bitte schließen Sie die Account Registrierung mit der e-Mail Verifizierung ab!</strong></p>"+
 					"<br>"+
-					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong><p>"+
+					"<p><strong>Dieses Produkt ist für folgenden Benutzer registriert:</strong></p>"+
 					"<p><strong>"+DataStatus.gender+" "+DataStatus.firstname+" "+DataStatus.familyname+"</strong></p>"+
 					"<p> e-Mail Adresse: <strong>"+DataStatus.email+"</strong></p>"+
 					"<p> Klarname Gerät: <strong>"+DataStatus.productname+"</strong></p>"+

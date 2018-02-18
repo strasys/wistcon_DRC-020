@@ -16,14 +16,6 @@ unset($arr);
 
 	$data = array(
 		'deviceID' => $deviceIDval,
-		'gender' => $_POST['gender'],
-		'firstname' => $_POST['firstName'],
-		'familyname' => $_POST['familyName'],
-		'street' => $_POST['street'],
-		'number' => $_POST['number'],
-		'PLZ' => $_POST['PLZ'],
-		'city' => $_POST['City'],
-		'country' => $_POST['Country'],
 		'email' => $_POST['email'],
 		'password' => $_POST['password']
 		);
@@ -44,6 +36,7 @@ unset($arr);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 	$return = curl_exec($ch);
 	curl_close($ch);
+	//echo $return;
 	DatabaseRegistration_return($return);
 	
 
@@ -51,7 +44,7 @@ function DatabaseRegistration_return($return){
 
 	$returnData = explode("&", $return);
 	$returnDataValues = array();
-	for ($i=0;$i<9;$i++){
+	for ($i=0;$i<10;$i++){
 		$temp = explode(":", $returnData[$i]);
 		$returnDataValues[$i] = $temp[1];
 	}
@@ -59,13 +52,14 @@ function DatabaseRegistration_return($return){
 	$returnDataFinal = array(
 		'product_registered' => $returnDataValues[0],
 		'product_registerID_exist' => $returnDataValues[1],
-		'accountstatus' => $returnDataValues[2],
-		'verykeysend' => $returnDataValues[3],
+		'accountlogin' => $returnDataValues[2],
+		'accountstatus' => $returnDataValues[3],
 		'database_write' => $returnDataValues[4],
 		'email' => $returnDataValues[5],
 		'gender' => $returnDataValues[6],
 		'firstname' => $returnDataValues[7],
-		'familyname' => $returnDataValues[8]
+		'familyname' => $returnDataValues[8],
+		'productname' => $returnDataValues[9]
 	);
 	
 	echo json_encode($returnDataFinal);	
