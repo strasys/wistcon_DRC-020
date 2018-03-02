@@ -21,7 +21,7 @@ function getXMLData()
 	$n = $xml->data_cloud[0]->datatocloud->count();
 	$data = $xml->data_cloud[0];
 	$data_array = array();
-	$variable_array = array("type","ext","metering_ID","time_interval","unit","factor","timestamp");
+	$variable_array = array("type","ext","meteringID","time_interval","unit","factor","timestamp");
 	$data_split_array = array();
 
 
@@ -53,10 +53,10 @@ function getXMLData()
 function getDatatoSend($type, $ext, $metering_ID, $time_interval, $unit, $factor, $timelastsend, $DeviceID){
 	
 	$timestamp_now = time();
-	
+	echo $timestamp_now."<br>";
 	$diff_time = $timestamp_now - $timelastsend;
 	$time_interval_seconds = $time_interval * 60;
-	
+	echo $diff_time."<br>";
 	if ($diff_time >= $time_interval_seconds)
 	{
 		$type_split = explode("_",$type);
@@ -99,7 +99,7 @@ function getDatatoSend($type, $ext, $metering_ID, $time_interval, $unit, $factor
 
 function SendData($Data_array){
 
-	$send_var_array = array("product_ID", "metering_ID", "value_metering", "time_stamp", "unit");
+	$send_var_array = array("productID", "meteringID", "value_metering", "time_stamp", "unit");
 	
 	$Num_Data = sizeof($Data_array);
 
@@ -110,7 +110,7 @@ function SendData($Data_array){
 			$data_string = $data_string.$send_var_array[$n].$i.'='.$Data_array[$i][$n].'&';
 		}
 	}
-
+	
 	$trimmed = rtrim($data_string, '&');
 	//echo $trimmed."<br>";
 
@@ -125,7 +125,6 @@ function SendData($Data_array){
 	$return = curl_exec($ch);
 	curl_close($ch);
 	return $return;
-
 }
 	
 }

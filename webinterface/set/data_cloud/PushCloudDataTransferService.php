@@ -1,6 +1,6 @@
 <?php
 // Gibt an welche PHP-Fehler �berhaupt angezeigt werden
-//error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL | E_STRICT);
 // Um die Fehler auch auszugeben, aktivieren wir die Ausgabe
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -24,13 +24,9 @@ $DataCloudClass = new DataCloudClass();
 
 $FetchXMLData = $DataCloudClass->getXMLData();
 $NumberofDatasets = sizeof($FetchXMLData);
-
 $EEPROM = new EEPROM();
 $DeviceID = $EEPROM->getDeviceID();
-
 $loopstatus = true;
-
-//echo time()."<br>";
 
 while ($loopstatus){
 	$loopstatus = $dnsloop->runstop();
@@ -44,22 +40,22 @@ while ($loopstatus){
 		//SendData array = DeviceID, metering_ID, value_metering, timestamp, unit 
 		$SendData = $DataCloudClass->getDatatoSend($FetchXMLData[$i]['type'],
 			$FetchXMLData[$i]['ext'],
-			$FetchXMLData[$i]['metering_ID'],
+			$FetchXMLData[$i]['meteringID'],
 			$FetchXMLData[$i]['time_interval'],
 			$FetchXMLData[$i]['unit'],
 			$FetchXMLData[$i]['factor'],
 			$FetchXMLData[$i]['timestamp'],
 			$DeviceID
 		);
-
 		if($SendData != NULL){
 			$transfer[$t] = $SendData;
 			//set timestamp to calculate next push ivent
 			$FetchXMLData[$i]["timestamp"] = $SendData[3];
 			$t+=1;
+			
 		}
 	}
-	
+
 	if ($transfer != NULL){
 		$DataCloudClass->SendData($transfer);	
 	}

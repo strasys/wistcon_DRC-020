@@ -27,6 +27,7 @@ $xml=simplexml_load_file("/var/www/VDF.xml") or die("Error: Cannot create object
 $DNSService = $xml->OperationModeDevice[0]->DNSService;
 $ComposerService = $xml->OperationModeDevice[0]->AutomaticHand;
 $pushButtonSensingService = $xml->OperationModeDevice[0]->pushButtonSensing;
+$PushDataCloudService = $xml->OperationModeDevice[0]->PushDataCloudService;
 
 //Set status of DNSService
 	$statusFile = fopen("/tmp/DNSservicestatus.txt", "w");
@@ -73,6 +74,31 @@ $pushButtonSensingService = $xml->OperationModeDevice[0]->pushButtonSensing;
 				$statusWord = "run";
 				writestatus($statusWord, $statusFile);
 				$cmd = "php /var/www/composer_prog/composer.php";
+				exec($cmd . " > /dev/null &");
+				break;
+		}
+
+	}
+//Set status of Cloud Service
+	unset($statusFile, $statusWord);
+	$statusFile = fopen("/tmp/CloudPushservicestatus.txt", "w");
+	if ($statusFile == false)
+	{
+		$errorMsg = "Error: fopen\"/tmp/CloudPushservicestatus.txt\", \"w\" ";
+		break;
+	}
+	elseif ($statusFile)
+	{
+		exec("chown www-data:root /tmp/CloudPushservicestatus.txt");
+		switch (($PushDataCloudService)){
+			case 'stop':
+				$statusWord = "stop";
+				writestatus($statusWord, $statusFile);
+				break;
+			case 'run':
+				$statusWord = "run";
+				writestatus($statusWord, $statusFile);
+				$cmd = "php /var/www/set/data_cloud/PushCloudDataTransferService.php";
 				exec($cmd . " > /dev/null &");
 				break;
 		}
