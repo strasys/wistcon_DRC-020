@@ -11,7 +11,7 @@ Installation steps:
 
 2. install_setuidgid.sh
 
-3. install_apache2_php5.s
+3. install_apache2_php5.sh
 
 4. manual adjustments after installation steps 1 - 3
 
